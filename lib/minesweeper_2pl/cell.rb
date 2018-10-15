@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Minesweeper
   class Cell
     attr_reader :content, :value, :status, :flag

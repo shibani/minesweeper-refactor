@@ -1,7 +1,7 @@
 module Minesweeper
   class BoardPrinter
 
-    NEWLINE = "\n"
+    NEWLINE = '\n'
     ALPHA_LEFT = '  '
     ALPHA_RIGHT = ' '
     CELL_LEFT = '|  '
