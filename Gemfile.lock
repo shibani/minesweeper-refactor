@@ -1,0 +1,22 @@
+PATH
+  remote: .
+  specs:
+    minesweeper_2pl (0.2.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    minitest (5.11.3)
+    rake (10.5.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  bundler (~> 1.16)
+  minesweeper_2pl!
+  minitest
+  rake (~> 10.0)
+
+BUNDLED WITH
+   1.16.1
