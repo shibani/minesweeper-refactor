@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    minesweeper_2pl (0.2.0)
+    minesweeper_2pl (0.1.0)
 
 GEM
   remote: https://rubygems.org/

@@ -5,7 +5,7 @@ require "minesweeper_2pl/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "minesweeper_2pl"
-  spec.version       = Minesweeper2pl::0.2.0
+  spec.version       = Minesweeper2pl::VERSION
   spec.authors       = ["shibani"]
   spec.email         = ["shibani@8thlight.com"]
 
