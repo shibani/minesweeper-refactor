@@ -1,24 +1,36 @@
 require 'test_helper'
 
 class BoardTest < Minitest::Test
+  
   def setup
-    @board = Minesweeper::Board.new(10, 10)
-    @board.set_positions(100)
+    @bomb_positions = [10, 11, 12, 20, 22, 30, 32, 40, 41, 42]
+    @board = Minesweeper::Board.new(10, 10, @bomb_positions)
 
-    @board04 = Minesweeper::Board.new(4, 4)
-    @board08 = Minesweeper::Board.new(10, 8)
-    @board11 = Minesweeper::Board.new(10, 11)
-    @board12 = Minesweeper::Board.new(10, 12)
-    @board13 = Minesweeper::Board.new(10, 13)
-    @board14 = Minesweeper::Board.new(10, 14)
-  end
+    @bomb_positions04 = [10, 11, 12, 13]
+    @board04 = Minesweeper::Board.new(4, 4, @bomb_positions04)
 
-  def test_that_it_has_a_board_class
-    refute_nil @board
+    @bomb_positions08 = [10, 11, 12, 20, 22, 30, 31, 32]
+    @board08 = Minesweeper::Board.new(10, 8, @bomb_positions08)
+
+    @bomb_positions11 = [10, 12, 13, 14, 20, 23, 24, 30, 32, 33, 34]
+    @board11 = Minesweeper::Board.new(10, 11, @bomb_positions11)
+
+    @bomb_positions12 = [10, 11, 12, 13, 20, 23, 30, 33, 40, 41, 42, 43]
+    @board12 = Minesweeper::Board.new(10, 12, @bomb_positions12)
+
+    @bomb_positions13 = [10, 11, 12, 13, 14, 20, 23, 24, 30, 31, 32, 33, 34]
+    @board13 = Minesweeper::Board.new(10, 13, @bomb_positions13)
+
+    @bomb_positions14 = [10, 11, 12, 13, 14, 20, 21, 23, 24, 30, 31, 32, 33, 34]
+    @board14 = Minesweeper::Board.new(10, 14, @bomb_positions14)
   end
 
   def test_that_it_initializes_with_a_row_size
     assert_equal 10, @board.row_size
+  end
+
+  def test_set_row_size
+    assert_equal(10, @board.row_size)
   end
 
   def test_that_it_initializes_with_a_bomb_count
@@ -29,20 +41,6 @@ class BoardTest < Minitest::Test
     assert_equal(100, @board.size)
   end
 
-  def test_that_it_has_bomb_positions_attribute
-    @board.set_bombs
-    refute_nil @board.bomb_positions
-  end
-
-  def test_that_it_sets_bomb_positions
-    @board.set_bombs
-    assert_equal(10, @board.bomb_positions.size)
-  end
-
-  def test_that_it_has_a_bomb_count_attribute
-    assert_equal(10, @board.bomb_count)
-  end
-
   def test_that_it_has_a_positions_attribute
     refute_nil @board.positions
   end
@@ -51,14 +49,18 @@ class BoardTest < Minitest::Test
     refute_nil @board.bomb_positions
   end
 
-  def test_that_set_positions_sets_a_cell_for_every_position
-    result = @board.positions[26]
-
-    assert_instance_of Minesweeper::Cell, result
+  def test_that_it_has_a_bomb_positions_attribute
+    @board.assign_bomb_positions
+    refute_nil @board.bomb_positions
   end
 
-  def test_set_row_size
-    assert_equal(10, @board.row_size)
+  def test_that_it_can_be_initialized_with_a_bomb_positions_array
+    assert @board.bomb_positions.size == 10
+  end
+
+  def test_that_it_sets_bomb_positions
+    @board.assign_bomb_positions
+    assert_equal(10, @board.bomb_positions.size)
   end
 
   def test_that_set_positions_can_set_the_bomb_positions_1
@@ -73,18 +75,28 @@ class BoardTest < Minitest::Test
     assert_operator(10, :<=, @board.bomb_positions.max)
   end
 
-  def test_that_set_positions_can_set_the_bomb_positions_4
-    counts = Hash.new(0)
+  def test_that_initialize_sets_a_cell_for_every_position
+    assert @board.positions.size == 100
+  end
+
+  def test_that_initialize_can_set_the_board_cells
+    bomb_count = Hash.new(0)
     @board.positions.each do |cell|
-      counts['B'] += 1 if cell.value == 'B'
+      bomb_count['B'] += 1 if cell.value == 'B'
     end
 
-    assert_equal(10, counts["B"])
+    assert_equal(10, bomb_count['B'])
+  end
+
+  def test_that_initialize_can_set_the_contents_of_the_board_cells
+    assert_equal(@board.positions[13].content, ' ')
+  end
+
+  def test_that_initialize_can_set_the_value_of_each_board_cell_depending_on_its_neighboring_cells
+    assert_equal(@board.positions[13].value, 2)
   end
 
   def test_that_it_can_collect_neighboring_cells_when_given_a_position
-    @board13.bomb_positions = [10, 11, 12, 13, 14, 20, 23, 24, 30, 31, 32, 33, 34]
-    @board13.set_board_positions(100)
     position = 21
 
     result = @board13.neighboring_cells(position)
@@ -93,8 +105,6 @@ class BoardTest < Minitest::Test
   end
 
   def test_that_it_can_collect_neighboring_cells_when_given_a_position_close_to_bottom_bounds
-    @board13.bomb_positions = [10, 11, 12, 13, 14, 20, 23, 24, 30, 31, 32, 33, 34]
-    @board13.set_board_positions(100)
     position = 1
 
     result = @board13.neighboring_cells(position)
@@ -103,8 +113,6 @@ class BoardTest < Minitest::Test
   end
 
   def test_that_it_can_collect_neighboring_empty_cells_when_given_a_position
-    @board13.bomb_positions = [10, 11, 12, 13, 14, 20, 23, 24, 30, 31, 32, 33, 34]
-    @board13.set_board_positions(100)
     position = 21
 
     result = @board13.neighboring_cells(position, true)
@@ -113,8 +121,6 @@ class BoardTest < Minitest::Test
   end
 
   def test_that_it_can_collect_neighboring_cells_when_given_a_position_close_to_top_bounds
-    @board13.bomb_positions = [10, 11, 12, 13, 14, 20, 23, 24, 30, 31, 32, 33, 34]
-    @board13.set_board_positions(100)
     position = 98
 
     result = @board13.neighboring_cells(position)
@@ -123,8 +129,6 @@ class BoardTest < Minitest::Test
   end
 
   def test_that_it_can_collect_neighboring_cells_when_given_a_position_close_to_left_bounds
-    @board13.bomb_positions = [10, 11, 12, 13, 14, 20, 23, 24, 30, 31, 32, 33, 34]
-    @board13.set_board_positions(100)
     position = 60
 
     result = @board13.neighboring_cells(position)
@@ -133,8 +137,6 @@ class BoardTest < Minitest::Test
   end
 
   def test_that_it_can_collect_neighboring_cells_when_given_a_position_close_to_right_bounds
-    @board13.bomb_positions = [10, 11, 12, 13, 14, 20, 23, 24, 30, 31, 32, 33, 34]
-    @board13.set_board_positions(100)
     position = 59
 
     result = @board13.neighboring_cells(position)
@@ -143,8 +145,6 @@ class BoardTest < Minitest::Test
   end
 
   def test_that_it_can_assign_values_to_board_squares
-    @board13.bomb_positions = [10, 11, 12, 13, 14, 20, 23, 24, 30, 31, 32, 33, 34]
-    @board13.set_board_positions(100)
     position = 21
 
     result = @board13.assign_value(position)
@@ -153,8 +153,6 @@ class BoardTest < Minitest::Test
   end
 
   def test_that_it_can_check_if_a_position_is_empty_1
-    @board14.bomb_positions = [10, 11, 12, 13, 14, 20, 21, 23, 24, 30, 31, 32, 33, 34]
-    @board14.set_board_positions(100)
     position = 64
 
     result = @board14.is_empty?(position)
@@ -163,8 +161,6 @@ class BoardTest < Minitest::Test
   end
 
   def test_that_it_can_check_if_a_position_is_empty_2
-    @board11.bomb_positions = [10, 12, 13, 14, 20, 23, 24, 30, 32, 33, 34]
-    @board11.set_board_positions(100)
     position = 64
     @board11.positions[position].update_cell_value(3)
 
@@ -174,8 +170,6 @@ class BoardTest < Minitest::Test
   end
 
   def test_that_it_can_collect_all_neigbhoring_empty_positions_1
-    @board13.bomb_positions = [10, 11, 12, 13, 14, 20, 23, 24, 30, 31, 32, 33, 34]
-    @board13.set_board_positions(100)
     position = 21
 
     result = @board13.neighboring_cells(position, true)
@@ -184,8 +178,6 @@ class BoardTest < Minitest::Test
   end
 
   def test_that_it_can_collect_all_neighboring_empty_positions_2
-    @board11.bomb_positions = [10, 12, 13, 14, 20, 23, 24, 30, 32, 33, 34]
-    @board11.set_board_positions(100)
     position = 21
 
     result = @board11.neighboring_cells(position, true)
@@ -194,8 +186,6 @@ class BoardTest < Minitest::Test
   end
 
   def test_that_it_can_assign_a_value_to_a_position_on_the_board
-    @board14.bomb_positions = [10, 11, 12, 13, 14, 20, 21, 23, 24, 30, 31, 32, 33, 34]
-    @board14.set_board_positions(100)
     position = 22
 
     result = @board14.assign_value(position)
@@ -204,8 +194,8 @@ class BoardTest < Minitest::Test
   end
 
   def test_that_it_can_return_neighboring_cells
-    @board04.bomb_positions = [2, 7, 8, 15]
-    @board04.set_board_positions(16)
+    @bomb_positions = [2, 7, 8, 15]
+    @board04 = Minesweeper::Board.new(4, 4, @bomb_positions)
 
     result = @board04.show_adjacent_empties_with_value(0)
     expected_positions = [1, 4, 5]
@@ -214,9 +204,6 @@ class BoardTest < Minitest::Test
   end
 
   def test_that_it_can_return_neighboring_cells_1
-    @board04.bomb_positions = [10, 11, 12, 13]
-    @board04.set_board_positions(16)
-
     result = @board04.show_adjacent_empties_with_value(0)
     expected_positions = [1, 4, 5, 2, 6, 8, 9, 3, 7]
 
@@ -224,8 +211,6 @@ class BoardTest < Minitest::Test
   end
 
   def test_that_it_can_get_the_neighboring_spaces_to_clear
-    @board04.bomb_positions = [10, 11, 12, 13]
-    @board04.set_board_positions(16)
     result = @board04.show_adjacent_empties_with_value(4)
     expected_positions = [5, 0, 1, 8, 9, 2, 6, 3, 7]
 
@@ -233,8 +218,6 @@ class BoardTest < Minitest::Test
   end
 
   def  test_that_it_can_assign_a_value_to_each_position_on_the_board
-    @board04.bomb_positions = [10, 11, 12, 13]
-    @board04.set_board_positions(16)
     @board04.assign_values_to_all_positions
     result = @board04.positions.map{ |cell| cell.value }
     expected_positions = [
@@ -247,8 +230,6 @@ class BoardTest < Minitest::Test
   end
 
   def test_that_it_can_show_adjacent_empties
-    @board04.bomb_positions = [10, 11, 12, 13]
-    @board04.set_board_positions(16)
     index = 0
 
     result = @board04.show_adjacent_empties_with_value(index)
@@ -265,8 +246,6 @@ class BoardTest < Minitest::Test
   end
 
   def test_that_it_can_clear_adjacent_spaces
-    @board08.bomb_positions = [10, 11, 12, 20, 22, 30, 31, 32]
-    @board08.set_board_positions(100)
     position = 21
 
     result = @board08.show_adjacent_empties_with_value(position)
@@ -275,8 +254,6 @@ class BoardTest < Minitest::Test
   end
 
   def test_that_it_can_clear_adjacent_spaces_1
-    @board.bomb_positions = [10, 11, 12, 20, 22, 30, 32, 40, 41, 42]
-    @board.set_board_positions(100)
     position = 21
 
     result = @board.show_adjacent_empties_with_value(position)
@@ -285,8 +262,6 @@ class BoardTest < Minitest::Test
   end
 
   def test_that_it_can_clear_adjacent_spaces_2
-    @board12.bomb_positions = [10, 11, 12, 13, 20, 23, 30, 33, 40, 41, 42, 43]
-    @board12.set_board_positions(100)
     position = 21
 
     result = @board12.show_adjacent_empties_with_value(position)
@@ -295,8 +270,6 @@ class BoardTest < Minitest::Test
   end
 
   def test_that_it_can_clear_adjacent_spaces_3
-    @board12.bomb_positions = [10, 11, 12, 13, 14, 20, 24, 30, 34, 40, 41, 42, 43, 44]
-    @board12.set_board_positions(100)
     position = 21
 
     result = @board12.show_adjacent_empties_with_value(position)
@@ -305,8 +278,6 @@ class BoardTest < Minitest::Test
   end
 
   def test_that_it_can_clear_adjacent_spaces_4
-    @board12.bomb_positions = [10, 11, 12, 13, 14, 15, 20, 25, 30, 35, 40, 41, 42, 43, 44, 45]
-    @board12.set_board_positions(100)
     position = 21
 
     result = @board12.show_adjacent_empties_with_value(position)
@@ -315,8 +286,6 @@ class BoardTest < Minitest::Test
   end
 
   def test_that_setting_empties_returns_a_correctly_sized_array
-    @board12.bomb_positions = [10, 11, 12, 13, 14, 15, 20, 25, 30, 35, 40, 41, 42, 43, 44, 45]
-    @board12.set_board_positions(100)
     position = 88
 
     @board12.show_adjacent_empties_with_value(position)
@@ -325,18 +294,14 @@ class BoardTest < Minitest::Test
   end
 
   def test_that_it_can_assign_values_to_empties_in_the_positions_array
-    @board12.bomb_positions = [10, 11, 12, 13, 14, 15, 20, 25, 30, 35, 40, 41, 42, 43, 44, 45]
-    @board12.set_board_positions(100)
     position = 21
 
-    result =  @board12.show_adjacent_empties_with_value(position)
+    result = @board12.show_adjacent_empties_with_value(position)
 
     assert_kind_of(Integer, @board12.positions[result.last].value)
   end
 
   def test_that_it_can_check_if_all_positions_are_empty
-    @board12.bomb_positions = [10, 11, 12, 13, 14, 15, 20, 25, 30, 35, 40, 41, 42, 43, 44, 45]
-    @board12.set_board_positions(100)
 
     assert(@board12.all_positions_empty?)
   end

@@ -7,6 +7,7 @@ module Minesweeper
 
     def initialize
       cli = CLI.new
+      
       self.cli = cli
       game_config = cli.start
       game = Game.new(game_config[:row_size], game_config[:bomb_count], game_config[:formatter])

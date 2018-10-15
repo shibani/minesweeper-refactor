@@ -91,7 +91,7 @@ class AppTest < Minitest::Test
     @mock_app.cli.reset_count
     @mock_app.cli.set_input!([1,0,"move"], [2,2,"move"])
 
-    out, err = capture_io do
+    out, _err = capture_io do
       @mock_app.play_game
     end
 
@@ -187,7 +187,7 @@ class AppTest < Minitest::Test
       @mock_app.game.board_positions[el].update_cell_status }
     @mock_app.game.game_over = true
 
-    out, err = capture_io do
+    out, _err = capture_io do
       @mock_app.end_game
     end
 

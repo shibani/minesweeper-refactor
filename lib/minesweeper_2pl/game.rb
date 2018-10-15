@@ -3,8 +3,8 @@ module Minesweeper
     attr_accessor :board, :game_over
     attr_reader :formatter, :board_printer, :icon_style
 
-    def initialize(row_size, bomb_count=0, cat_emoji=nil)
-      board = Board.new(row_size, bomb_count)
+    def initialize(row_size, bomb_count=0, cat_emoji=nil, bomb_array=[])
+      board = Board.new(row_size, bomb_count, bomb_array)
       self.board = board
 
       set_board_positions(row_size)
@@ -90,7 +90,7 @@ module Minesweeper
       new_bomb_location = (((0...row_size ** 2 ).to_a) - bomb_positions).sample
       new_bomb_array << new_bomb_location
       set_bomb_positions(new_bomb_array)
-      board.set_board_positions(row_size ** 2)
+      board.set_positions(row_size ** 2)
     end
 
     def place_move(move)
