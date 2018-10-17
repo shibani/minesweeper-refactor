@@ -8,8 +8,9 @@ class InputValidatorTest < Minitest::Test
   def setup
     @validator = Minesweeper::InputValidator
     @cli = Minesweeper::CLI.new
-    @mock_game = Minesweeper::MockGame.new(10,0)
-    @game = Minesweeper::Game.new(10,10)
+    @board = Minesweeper::Board.new(10,10)
+    @mock_game = Minesweeper::MockGame.new(@board)
+    @game = Minesweeper::Game.new(@board)
     @mock_cli = Minesweeper::MockCli.new
   end
 

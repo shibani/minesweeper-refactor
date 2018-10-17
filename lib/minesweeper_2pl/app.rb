@@ -11,8 +11,8 @@ module Minesweeper
     def start
       cli = CLI.new
       game = setup_game(cli)
-      play_game(game)
-      end_game(game)
+      play_game(game, cli)
+      end_game(game, cli)
     end
 
     def setup_game(cli)
