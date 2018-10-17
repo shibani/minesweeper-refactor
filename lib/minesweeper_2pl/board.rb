@@ -40,43 +40,78 @@ module Minesweeper
 
     def neighboring_cells(position, empty=false)
       positions_array = []
-
-      middle_row = (position / row_size).to_i * row_size
-      bottom_row = (position / row_size).to_i * row_size - row_size
-      top_row = (position / row_size).to_i * row_size + row_size
-
-      left = position - 1
-      right = position + 1
-      
-      bottom = position - row_size
-      bottom_left = bottom - 1
-      bottom_right = bottom + 1
-
-      top = position + row_size
-      top_left = top - 1
-      top_right = top + 1
-
       cells_hash = {}
 
-      cells_hash[left] = middle_row
-      cells_hash[right] = middle_row
+      set_left(cells_hash, position, row_size)
+      set_right(cells_hash, position, row_size)
 
-      cells_hash[bottom_left] = bottom_row
-      cells_hash[bottom] = bottom_row
-      cells_hash[bottom_right] = bottom_row
+      set_bottom_left(cells_hash, position, row_size)
+      set_bottom_middle(cells_hash, position, row_size)
+      set_bottom_right(cells_hash, position, row_size)
 
-      cells_hash[top_left] = top_row
-      cells_hash[top] = top_row
-      cells_hash[top_right] = top_row
+      set_top_left(cells_hash, position, row_size)
+      set_top_middle(cells_hash, position, row_size)
+      set_top_right(cells_hash, position, row_size)
+
 
       if empty
-        cells_hash.each do |cell_position, cell_row|
-          positions_array << cell_position if within_bounds(cell_position, cell_row) && is_empty?(cell_position)
-        end
-      else
-        cells_hash.each do |cell_position, cell_row|
-          positions_array << cell_position if within_bounds(cell_position, cell_row)
-        end
+        empty_neighboring_cells(cells_hash, positions_array)
+      else 
+        non_empty_neighboring_cells(cells_hash, positions_array)
+      end
+    end
+
+    def set_left(cells_hash, position, row_size)
+      row = (position / row_size).to_i * row_size
+      cells_hash[position - 1] = row
+    end 
+
+    def set_right(cells_hash, position, row_size)
+      row = (position / row_size).to_i * row_size
+      cells_hash[position + 1] = row
+    end 
+
+    def set_bottom_left(cells_hash, position, row_size)
+      row = (position / row_size).to_i * row_size - row_size
+      cells_hash[position - row_size - 1] = row
+    end
+
+    def set_bottom_right(cells_hash, position, row_size)
+      row = (position / row_size).to_i * row_size - row_size
+      cells_hash[position - row_size + 1] = row
+    end
+
+    def set_bottom_middle(cells_hash, position, row_size)
+      row = (position / row_size).to_i * row_size - row_size
+      cells_hash[position - row_size] = row
+    end
+
+    def set_top_left(cells_hash, position, row_size)
+      row = (position / row_size).to_i * row_size + row_size
+      cells_hash[position + row_size - 1] = row
+    end
+
+    def set_top_middle(cells_hash, position, row_size)
+      row = (position / row_size).to_i * row_size + row_size
+      cells_hash[position + row_size] = row
+    end
+
+    def set_top_right(cells_hash, position, row_size)
+      row = (position / row_size).to_i * row_size + row_size
+      cells_hash[position + row_size + 1] = row
+    end
+
+
+    def empty_neighboring_cells(cells_hash, positions_array)
+      cells_hash.each do |cell_position, cell_row|
+        positions_array << cell_position if within_bounds(cell_position, cell_row) && is_empty?(cell_position)
+      end
+      positions_array
+    end
+
+    def non_empty_neighboring_cells(cells_hash, positions_array)
+      cells_hash.each do |cell_position, cell_row|
+        positions_array << cell_position if within_bounds(cell_position, cell_row)
       end
       positions_array
     end
@@ -90,7 +125,7 @@ module Minesweeper
         cell = cells_to_check.first
         neighboring_cells(cell).each do |cell_position|
           spaces_to_clear << cell_position unless positions[cell_position].content.include? 'B'
-          cells_to_check << cell_position if positions[cell_position].value == 0
+          cells_to_check << cell_position if positions[cell_position].value == 0 
         end
         if checked.empty?
           cells_to_check = cells_to_check.uniq

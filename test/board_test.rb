@@ -112,9 +112,7 @@ class BoardTest < Minitest::Test
 
   def test_that_it_can_collect_neighboring_empty_cells_when_given_a_position
     position = 21
-
     result = @board13.neighboring_cells(position, true)
-
     assert_equal([22], result)
   end
 
@@ -169,17 +167,13 @@ class BoardTest < Minitest::Test
 
   def test_that_it_can_collect_all_neigbhoring_empty_positions_1
     position = 21
-
     result = @board13.neighboring_cells(position, true)
-
     assert_equal 1, result.size
   end
 
   def test_that_it_can_collect_all_neighboring_empty_positions_2
     position = 21
-
     result = @board11.neighboring_cells(position, true)
-
     assert_equal 3, result.size
   end
 
