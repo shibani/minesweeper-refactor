@@ -18,6 +18,15 @@ module Minesweeper
       @inputs
     end
 
+    def start
+      game_config = {}
+      game_config[:formatter] = "S"
+      result = get_player_params
+      game_config[:row_size] = result[0].to_i
+      game_config[:bomb_count] = result[1].to_i
+      game_config
+    end
+
     def get_player_params
       result = []
       size = get_player_entered_board_size

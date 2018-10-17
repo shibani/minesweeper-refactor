@@ -1,6 +1,6 @@
 require 'stringio'
-require "test_helper"
-require "io_test_helpers"
+require 'test_helper'
+require 'io_test_helpers'
 
 class MessagesTest < Minitest::Test
   include IoTestHelpers

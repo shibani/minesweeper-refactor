@@ -7,7 +7,8 @@ class CliTest < Minitest::Test
 
   def setup
     @cli = Minesweeper::CLI.new
-    @mock_game = Minesweeper::MockGame.new(10,0)
+    @board = Minesweeper::Board.new(10,0)
+    @mock_game = Minesweeper::MockGame.new(@board)
     @mock_cli = Minesweeper::MockCli.new
   end
 

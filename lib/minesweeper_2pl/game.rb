@@ -1,57 +1,19 @@
 module Minesweeper
   class Game
-    attr_accessor :board, :game_over
-    attr_reader :formatter, :board_printer, :icon_style
+    attr_accessor :game_over
+    attr_reader :board, :formatter, :board_printer, :icon_style
 
-    def initialize(row_size, bomb_count=0, cat_emoji=nil)
-      board = Board.new(row_size, bomb_count)
-      self.board = board
-
-      set_board_positions(row_size)
+    def initialize(board, cat_emoji=nil)
+      @board = board
 
       @icon_style = cat_emoji ? CatEmoji.new : BombEmoji.new
       @formatter = BoardFormatter.new
       @board_printer = BoardPrinter.new
     end
 
-    def row_size
-      board.row_size
-    end
-
-    def bomb_count
-      board.bomb_count
-    end
-
-    def set_bomb_positions(array)
-      board.bomb_positions = array
-    end
-
-    def bomb_positions
-      board.bomb_positions
-    end
-
-    def set_positions(array)
-      array.each.with_index do |position, i|
-        board_positions[i].update_cell_content(position)
-      end
-      board_positions.each.with_index do |position, i|
-        content = board_positions[i].content
-        if content == 'B'
-          board_positions[i].update_cell_value(content)
-        else
-          value = board.assign_value(i)
-          board_positions[i].update_cell_value(value)
-        end
-      end
-    end
-
     def get_position(move)
       position = move_to_position(move)
       board_positions[position]
-    end
-
-    def set_board_positions(size)
-      board.set_positions(size * size)
     end
 
     def board_positions
@@ -60,10 +22,6 @@ module Minesweeper
 
     def board_values
       board_positions.map(&:value)
-    end
-
-    def set_board_values
-      board.assign_values_to_all_positions
     end
 
     def set_cell_status(array)
@@ -85,12 +43,27 @@ module Minesweeper
       board_printer.print_board(board_array, board)
     end
 
+    def set_positions(array)
+      array.each.with_index do |position, i|
+        board_positions[i].update_cell_content(position)
+      end
+      board_positions.each.with_index do |position, i|
+        content = board_positions[i].content
+        if content == 'B'
+          board_positions[i].update_cell_value(content)
+        else
+          value = board.assign_value(i)
+          board_positions[i].update_cell_value(value)
+        end
+      end
+    end
+
     def reassign_bomb(position)
       new_bomb_array = bomb_positions - [position]
-      new_bomb_location = (((0...row_size ** 2 ).to_a) - bomb_positions).sample
+      new_bomb_location = (((0...board.row_size ** 2 ).to_a) - bomb_positions).sample
       new_bomb_array << new_bomb_location
-      set_bomb_positions(new_bomb_array)
-      board.set_board_positions(row_size ** 2)
+      board.bomb_positions = new_bomb_array
+      board.set_positions
     end
 
     def place_move(move)
@@ -233,6 +206,10 @@ module Minesweeper
           cell.add_flag
         end
       end
+    end
+
+    def bomb_positions
+      board.bomb_positions
     end
 
     def all_bomb_positions_are_flagged?

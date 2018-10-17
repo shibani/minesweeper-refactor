@@ -2,8 +2,8 @@ require "test_helper"
 
 class BoardPrinterTest < Minitest::Test
   def setup
-    @game = Minesweeper::Game.new(4,4)
-    @game.board.bomb_positions = [2, 7, 8, 15]
+    @board = Minesweeper::Board.new(4, 4, [2, 7, 8, 15])
+    @game = Minesweeper::Game.new(@board)
     @game.formatter.show_bombs = 'show'
     @board_array = @game.formatter.format_board_with_emoji(@game.board, @game.icon_style)
     @board_printer = Minesweeper::BoardPrinter.new

@@ -1,37 +1,34 @@
 module Minesweeper
   class Board
-    attr_accessor :size, :bomb_positions, :positions
-    attr_reader :row_size, :bomb_count
+    attr_accessor :bomb_positions, :positions
+    attr_reader :row_size, :bomb_count, :size
 
-    def initialize(row_size, bomb_count)
+    def initialize(row_size, bomb_count, bomb_position_args=[])
       @row_size = row_size
       @bomb_count = bomb_count
-      @size = row_size * row_size
+      @size = @row_size ** 2
+      assign_bomb_positions(bomb_position_args)
+      set_positions(bomb_position_args)
     end
 
-    def set_positions(board_size)
-      set_bombs
-      set_board_positions(board_size)
+    def set_positions(bomb_position_args=[])
+      assign_cell_content
+      assign_values_to_all_positions
     end
 
-    def set_board_positions(board_size)
-      self.positions = (0...board_size).map do |cell|
+    def assign_bomb_positions(bomb_position_args)
+      if bomb_position_args != []
+        self.bomb_positions = bomb_position_args 
+      else
+        bombs = (0..size - 1).to_a.shuffle
+        self.bomb_positions = bombs.first(bomb_count)
+      end
+    end
+
+    def assign_cell_content
+      self.positions = (0...size).map do |cell|
         bomb_positions.include?(cell) ? Cell.new('B') : Cell.new(' ')
       end
-      positions.map.with_index do |cell, i|
-        if cell.content == 'B'
-          cell.update_cell_value(cell.content)
-        else
-          value = assign_value(i)
-          cell.update_cell_value(value)
-        end
-      end
-    end
-
-    def set_bombs
-      @bomb_positions = []
-      bombs = (0..size-1).to_a.shuffle
-      @bomb_positions = bombs.first(bomb_count)
     end
 
     def assign_values_to_all_positions
@@ -50,14 +47,14 @@ module Minesweeper
 
       left = position - 1
       right = position + 1
-      top = position + row_size
+      
       bottom = position - row_size
+      bottom_left = bottom - 1
+      bottom_right = bottom + 1
 
-      bottom_left = position - row_size - 1
-      bottom_right = position - row_size + 1
-
-      top_left = position + row_size - 1
-      top_right = position + row_size + 1
+      top = position + row_size
+      top_left = top - 1
+      top_right = top + 1
 
       cells_hash = {}
 
@@ -122,17 +119,17 @@ module Minesweeper
     end
 
     def all_positions_empty?
-      !!(positions.detect{ |position| position.status == 'revealed' }).nil?
+      !!(positions.detect { |position| position.status == 'revealed' }).nil?
     end
 
     private
 
-      def within_bounds(relative_position, row)
-        relative_position >= 0 && relative_position < size && relative_position >= row && relative_position < row + row_size
-      end
+    def within_bounds(relative_position, row)
+      relative_position >= 0 && relative_position < size && relative_position >= row && relative_position < row + row_size
+    end
 
-      def check_position(position)
-        positions[position].content == 'B' ? 1 : 0
-      end
+    def check_position(position)
+      positions[position].content == 'B' ? 1 : 0
+    end
   end
 end
