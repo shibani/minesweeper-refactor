@@ -50,7 +50,6 @@ class BoardTest < Minitest::Test
   end
 
   def test_that_it_has_a_bomb_positions_attribute
-    @board.assign_bomb_positions
     refute_nil @board.bomb_positions
   end
 
@@ -59,7 +58,6 @@ class BoardTest < Minitest::Test
   end
 
   def test_that_it_sets_bomb_positions
-    @board.assign_bomb_positions
     assert_equal(10, @board.bomb_positions.size)
   end
 
@@ -238,14 +236,14 @@ class BoardTest < Minitest::Test
   end
 
   def test_that_it_can_clear_adjacent_spaces
-    @board04.bomb_positions = [1, 6, 10, 13]
-    @board04.set_board_positions(16)
+    bomb_positions = [1, 6, 10, 13]
+    board = Minesweeper::Board.new(4, 4, bomb_positions)
     index = 4
-    result = @board04.show_adjacent_empties_with_value(index)
+    result = board.show_adjacent_empties_with_value(index)
     assert_equal([5, 0, 8, 9], result)
   end
 
-  def test_that_it_can_clear_adjacent_spaces
+  def test_that_it_can_clear_adjacent_spaces_when_given_a_position
     position = 21
 
     result = @board08.show_adjacent_empties_with_value(position)

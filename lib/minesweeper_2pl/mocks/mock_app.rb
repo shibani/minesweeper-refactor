@@ -7,11 +7,10 @@ module Minesweeper
 
     attr_accessor :game, :cli
 
-    def initialize
-      cli = MockCli.new
-      self.cli = cli
-      game = MockGame.new(5,5)
-      self.game = game
+    def initialize(game=nil, cli=nil)
+      @cli = cli
+      @game = game
+      @board = game.board
     end
 
   end

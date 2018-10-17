@@ -9,6 +9,7 @@ class InputValidatorTest < Minitest::Test
     @validator = Minesweeper::InputValidator
     @cli = Minesweeper::CLI.new
     @mock_game = Minesweeper::MockGame.new(10,0)
+    @game = Minesweeper::Game.new(10,10)
     @mock_cli = Minesweeper::MockCli.new
   end
 
@@ -70,7 +71,7 @@ class InputValidatorTest < Minitest::Test
 
   def test_that_it_can_return_validated_coordinates
     input = "move 1,3"
-    result = @validator.return_coordinates_if_input_is_within_range(input, @mock_game)
+    result = @validator.return_coordinates_if_input_is_within_range(input, @game)
     assert_equal([1, 3, "move"], result)
   end
 

@@ -3,23 +3,26 @@ module Minesweeper
     attr_accessor :bomb_positions, :positions
     attr_reader :row_size, :bomb_count, :size
 
-    def initialize(row_size, bomb_count, bomb_positions=[])
+    def initialize(row_size, bomb_count, bomb_position_args=[])
       @row_size = row_size
       @bomb_count = bomb_count
-      @size = row_size * row_size
-      assign_bomb_positions(bomb_positions)
-      set_positions('foo')
+      @size = @row_size ** 2
+      assign_bomb_positions(bomb_position_args)
+      set_positions(bomb_position_args)
     end
 
-    def set_positions(foo)
+    def set_positions(bomb_position_args=[])
       assign_cell_content
       assign_values_to_all_positions
     end
 
-    def assign_bomb_positions(bomb_positions=[])
-      return self.bomb_positions = bomb_positions if bomb_positions != []
-      bombs = (0..size - 1).to_a.shuffle
-      self.bomb_positions = bombs.first(bomb_count)
+    def assign_bomb_positions(bomb_position_args)
+      if bomb_position_args != []
+        self.bomb_positions = bomb_position_args 
+      else
+        bombs = (0..size - 1).to_a.shuffle
+        self.bomb_positions = bombs.first(bomb_count)
+      end
     end
 
     def assign_cell_content
@@ -44,14 +47,14 @@ module Minesweeper
 
       left = position - 1
       right = position + 1
-      top = position + row_size
+      
       bottom = position - row_size
+      bottom_left = bottom - 1
+      bottom_right = bottom + 1
 
-      bottom_left = position - row_size - 1
-      bottom_right = position - row_size + 1
-
-      top_left = position + row_size - 1
-      top_right = position + row_size + 1
+      top = position + row_size
+      top_left = top - 1
+      top_right = top + 1
 
       cells_hash = {}
 

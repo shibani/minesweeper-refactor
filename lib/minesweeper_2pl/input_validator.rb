@@ -30,7 +30,7 @@ module Minesweeper
     end
 
     def self.player_input_is_within_range?(coords, game)
-      (coords[0].to_i <= game.board.row_size) && (coords[1].to_i <= game.board.row_size)
+      (coords[0].to_i <= game.board) && (coords[1].to_i <= game.board)
     end
 
     def self.return_coordinates_if_input_is_within_range(input, game)
