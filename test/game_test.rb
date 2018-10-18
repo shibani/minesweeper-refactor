@@ -393,7 +393,7 @@ class GameTest < Minitest::Test
       @game.board_positions[el].update_cell_status }
     result = @game.flood_fill(9)
 
-    assert_equal([8,3,4,2,7,1,6,0,5,9], result)
+    assert_equal([8,3,4,2,7,1,6,0,5,9].sort, result.sort)
   end
 
   def test_that_flood_fill_returns_adjacent_empties_when_position_is_a_bomb

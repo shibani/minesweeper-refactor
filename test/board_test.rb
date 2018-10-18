@@ -99,7 +99,7 @@ class BoardTest < Minitest::Test
 
     result = @board13.neighboring_cells(position)
 
-    assert_equal([20, 22, 10, 11, 12, 30, 31, 32], result)
+    assert_equal([20, 22, 10, 11, 12, 30, 31, 32].sort, result.sort)
   end
 
   def test_that_it_can_collect_neighboring_cells_when_given_a_position_close_to_bottom_bounds
@@ -107,7 +107,7 @@ class BoardTest < Minitest::Test
 
     result = @board13.neighboring_cells(position)
 
-    assert_equal([0, 2, 10, 11, 12], result)
+    assert_equal([0, 2, 10, 11, 12].sort, result.sort)
   end
 
   def test_that_it_can_collect_neighboring_empty_cells_when_given_a_position
@@ -121,7 +121,7 @@ class BoardTest < Minitest::Test
 
     result = @board13.neighboring_cells(position)
 
-    assert_equal([97, 99, 87, 88, 89], result)
+    assert_equal([97, 99, 87, 88, 89].sort, result.sort)
   end
 
   def test_that_it_can_collect_neighboring_cells_when_given_a_position_close_to_left_bounds
@@ -129,7 +129,7 @@ class BoardTest < Minitest::Test
 
     result = @board13.neighboring_cells(position)
 
-    assert_equal([61, 50, 51, 70, 71], result)
+    assert_equal([61, 50, 51, 70, 71].sort, result.sort)
   end
 
   def test_that_it_can_collect_neighboring_cells_when_given_a_position_close_to_right_bounds
@@ -137,7 +137,7 @@ class BoardTest < Minitest::Test
 
     result = @board13.neighboring_cells(position)
 
-    assert_equal([58, 48, 49, 68, 69], result)
+    assert_equal([58, 48, 49, 68, 69].sort, result.sort)
   end
 
   def test_that_it_can_assign_values_to_board_squares

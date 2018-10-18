@@ -7,6 +7,7 @@ module Minesweeper
       @row_size = row_size
       @bomb_count = bomb_count
       @size = @row_size ** 2
+      @neighboring_cells = NeighboringCells.new
       assign_bomb_positions(bomb_position_args)
       set_positions(bomb_position_args)
     end
@@ -39,81 +40,7 @@ module Minesweeper
     end
 
     def neighboring_cells(position, empty=false)
-      positions_array = []
-      cells_hash = {}
-
-      set_left(cells_hash, position, row_size)
-      set_right(cells_hash, position, row_size)
-
-      set_bottom_left(cells_hash, position, row_size)
-      set_bottom_middle(cells_hash, position, row_size)
-      set_bottom_right(cells_hash, position, row_size)
-
-      set_top_left(cells_hash, position, row_size)
-      set_top_middle(cells_hash, position, row_size)
-      set_top_right(cells_hash, position, row_size)
-
-
-      if empty
-        empty_neighboring_cells(cells_hash, positions_array)
-      else 
-        non_empty_neighboring_cells(cells_hash, positions_array)
-      end
-    end
-
-    def set_left(cells_hash, position, row_size)
-      row = (position / row_size).to_i * row_size
-      cells_hash[position - 1] = row
-    end 
-
-    def set_right(cells_hash, position, row_size)
-      row = (position / row_size).to_i * row_size
-      cells_hash[position + 1] = row
-    end 
-
-    def set_bottom_left(cells_hash, position, row_size)
-      row = (position / row_size).to_i * row_size - row_size
-      cells_hash[position - row_size - 1] = row
-    end
-
-    def set_bottom_right(cells_hash, position, row_size)
-      row = (position / row_size).to_i * row_size - row_size
-      cells_hash[position - row_size + 1] = row
-    end
-
-    def set_bottom_middle(cells_hash, position, row_size)
-      row = (position / row_size).to_i * row_size - row_size
-      cells_hash[position - row_size] = row
-    end
-
-    def set_top_left(cells_hash, position, row_size)
-      row = (position / row_size).to_i * row_size + row_size
-      cells_hash[position + row_size - 1] = row
-    end
-
-    def set_top_middle(cells_hash, position, row_size)
-      row = (position / row_size).to_i * row_size + row_size
-      cells_hash[position + row_size] = row
-    end
-
-    def set_top_right(cells_hash, position, row_size)
-      row = (position / row_size).to_i * row_size + row_size
-      cells_hash[position + row_size + 1] = row
-    end
-
-
-    def empty_neighboring_cells(cells_hash, positions_array)
-      cells_hash.each do |cell_position, cell_row|
-        positions_array << cell_position if within_bounds(cell_position, cell_row) && is_empty?(cell_position)
-      end
-      positions_array
-    end
-
-    def non_empty_neighboring_cells(cells_hash, positions_array)
-      cells_hash.each do |cell_position, cell_row|
-        positions_array << cell_position if within_bounds(cell_position, cell_row)
-      end
-      positions_array
+      @neighboring_cells.get_cells(positions, position, row_size, empty)
     end
 
     def show_adjacent_empties_with_value(position)
@@ -140,11 +67,8 @@ module Minesweeper
 
     def assign_value(position)
       if is_empty?(position)
-        cells_to_check = neighboring_cells(position)
         sum = 0
-        cells_to_check.each do |cell_position|
-          sum += check_position(cell_position)
-        end
+        neighboring_cells(position).each { |cell_position| sum += check_position(cell_position)} 
       end
       sum
     end
@@ -158,10 +82,6 @@ module Minesweeper
     end
 
     private
-
-    def within_bounds(relative_position, row)
-      relative_position >= 0 && relative_position < size && relative_position >= row && relative_position < row + row_size
-    end
 
     def check_position(position)
       positions[position].content == 'B' ? 1 : 0
