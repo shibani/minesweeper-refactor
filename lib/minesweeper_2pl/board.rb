@@ -7,6 +7,7 @@ module Minesweeper
       @row_size = row_size
       @bomb_count = bomb_count
       @size = @row_size ** 2
+      @neighboring_cells = NeighboringCells.new
       assign_bomb_positions(bomb_position_args)
       set_positions(bomb_position_args)
     end
@@ -39,46 +40,7 @@ module Minesweeper
     end
 
     def neighboring_cells(position, empty=false)
-      positions_array = []
-
-      middle_row = (position / row_size).to_i * row_size
-      bottom_row = (position / row_size).to_i * row_size - row_size
-      top_row = (position / row_size).to_i * row_size + row_size
-
-      left = position - 1
-      right = position + 1
-      
-      bottom = position - row_size
-      bottom_left = bottom - 1
-      bottom_right = bottom + 1
-
-      top = position + row_size
-      top_left = top - 1
-      top_right = top + 1
-
-      cells_hash = {}
-
-      cells_hash[left] = middle_row
-      cells_hash[right] = middle_row
-
-      cells_hash[bottom_left] = bottom_row
-      cells_hash[bottom] = bottom_row
-      cells_hash[bottom_right] = bottom_row
-
-      cells_hash[top_left] = top_row
-      cells_hash[top] = top_row
-      cells_hash[top_right] = top_row
-
-      if empty
-        cells_hash.each do |cell_position, cell_row|
-          positions_array << cell_position if within_bounds(cell_position, cell_row) && is_empty?(cell_position)
-        end
-      else
-        cells_hash.each do |cell_position, cell_row|
-          positions_array << cell_position if within_bounds(cell_position, cell_row)
-        end
-      end
-      positions_array
+      @neighboring_cells.get_cells(positions, position, row_size, empty)
     end
 
     def show_adjacent_empties_with_value(position)
@@ -90,7 +52,7 @@ module Minesweeper
         cell = cells_to_check.first
         neighboring_cells(cell).each do |cell_position|
           spaces_to_clear << cell_position unless positions[cell_position].content.include? 'B'
-          cells_to_check << cell_position if positions[cell_position].value == 0
+          cells_to_check << cell_position if positions[cell_position].value == 0 
         end
         if checked.empty?
           cells_to_check = cells_to_check.uniq
@@ -105,11 +67,8 @@ module Minesweeper
 
     def assign_value(position)
       if is_empty?(position)
-        cells_to_check = neighboring_cells(position)
         sum = 0
-        cells_to_check.each do |cell_position|
-          sum += check_position(cell_position)
-        end
+        neighboring_cells(position).each { |cell_position| sum += check_position(cell_position)} 
       end
       sum
     end
@@ -123,10 +82,6 @@ module Minesweeper
     end
 
     private
-
-    def within_bounds(relative_position, row)
-      relative_position >= 0 && relative_position < size && relative_position >= row && relative_position < row + row_size
-    end
 
     def check_position(position)
       positions[position].content == 'B' ? 1 : 0
