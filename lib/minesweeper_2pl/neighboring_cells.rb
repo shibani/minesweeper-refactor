@@ -9,7 +9,7 @@ module Minesweeper
           end
         end
       end
-      empty ? empty_neighboring_cells(cells_hash, positions_array, row_size, positions) : non_empty_neighboring_cells(cells_hash, positions_array, row_size)
+      empty ? empty_neighboring_cells(cells_hash, positions_array, row_size, positions) : all_neighboring_cells(cells_hash, positions_array, row_size)
     end
 
     def current_cell?(row_offset, cell_offset)
@@ -26,18 +26,15 @@ module Minesweeper
       cells_hash[key] = row
     end
 
-    def empty_neighboring_cells(cells_hash, positions_array, row_size, positions)
-      cells_hash.each do |cell_position, cell_row|
-        positions_array << cell_position if within_bounds(cell_position, cell_row, row_size) && is_empty?(cell_position, positions)
-      end
-      positions_array
-    end
-
-    def non_empty_neighboring_cells(cells_hash, positions_array, row_size)
+    def all_neighboring_cells(cells_hash, positions_array, row_size)
       cells_hash.each do |cell_position, cell_row|
         positions_array << cell_position if within_bounds(cell_position, cell_row, row_size)
       end
       positions_array
+    end
+
+    def empty_neighboring_cells(cells_hash, positions_array, row_size, positions)
+      all_neighboring_cells(cells_hash, positions_array, row_size).select{|cell| is_empty?(cell, positions)}
     end
 
     private
@@ -47,7 +44,7 @@ module Minesweeper
     end
 
     def within_bounds(relative_position, row, row_size)
-      size = row_size ** 2
+      size = row_size**2
       (relative_position >= 0 && relative_position < size) && 
         (relative_position >= row && relative_position < row + row_size)
     end
