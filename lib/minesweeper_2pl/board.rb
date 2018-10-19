@@ -8,6 +8,7 @@ module Minesweeper
       @bomb_count = bomb_count
       @size = @row_size ** 2
       @neighboring_cells = NeighboringCells.new
+      @adjacent_empties = AdjacentEmpties.new
       assign_bomb_positions(bomb_position_args)
       set_positions(bomb_position_args)
     end
@@ -44,25 +45,7 @@ module Minesweeper
     end
 
     def show_adjacent_empties_with_value(position)
-      spaces_to_clear = [position]
-      cells_to_check = [position]
-      checked = []
-
-      while cells_to_check.length.positive?
-        cell = cells_to_check.first
-        neighboring_cells(cell).each do |cell_position|
-          spaces_to_clear << cell_position unless positions[cell_position].content.include? 'B'
-          cells_to_check << cell_position if positions[cell_position].value == 0 
-        end
-        if checked.empty?
-          cells_to_check = cells_to_check.uniq
-        else
-          cells_to_check = cells_to_check.uniq - checked
-        end
-        spaces_to_clear = spaces_to_clear.uniq
-        checked << cell
-      end
-      spaces_to_clear - [position]
+      @adjacent_empties.get_empties_with_value(position, positions, row_size)
     end
 
     def assign_value(position)
