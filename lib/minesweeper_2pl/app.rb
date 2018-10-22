@@ -3,11 +3,6 @@ module Minesweeper
     BOMB_PERCENT = 0.75
     MAX_ROW_NUM = 20
 
-    # attr_accessor :game, :cli
-    # attr_reader :board
-
-    #cli, validator, input, output
-
     def start
       cli = CLI.new
       game = setup_game(cli)
