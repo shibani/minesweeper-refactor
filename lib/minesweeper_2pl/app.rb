@@ -10,7 +10,7 @@ module Minesweeper
       }
       cli = CLI.new
       game = setup_game(cli, io)
-      play_game(game, cli)
+      play_game(game, cli, io)
       end_game(game, cli)
     end
 
@@ -20,11 +20,11 @@ module Minesweeper
       Game.new(board, game_config[:formatter])
     end
 
-    def play_game(game, cli)
+    def play_game(game, cli, io)
       until game_is_over(game)
         move = nil
         while game.is_not_valid?(move)
-          cli.invalid_move if move
+          cli.invalid_move(io) if move
           move = cli.get_move(game)
         end
         game.place_move(move)

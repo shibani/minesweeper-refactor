@@ -1,7 +1,7 @@
 module Minesweeper
   class MockOutput < Output
-    def display(_msg)
-      nil
+    def display(msg)
+      return msg
     end
   end
 end

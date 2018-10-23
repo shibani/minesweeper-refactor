@@ -7,7 +7,7 @@ module Minesweeper
     def start(io)
       io[:output].display(Messages.welcome)
       game_config = {}
-      game_config[:formatter] = ask_for_emoji_type
+      game_config[:formatter] = ask_for_emoji_type(io)
       result = get_player_params(io)
       game_config[:row_size] = result[0].to_i
       game_config[:bomb_count] = result[1].to_i
@@ -19,17 +19,17 @@ module Minesweeper
       get_player_input(game, io)
     end
 
-    def ask_for_emoji_type
+    def ask_for_emoji_type(io)
       choice = nil
       while choice.nil?
-        puts Messages.ask_for_emoji_type
-        choice = get_emoji_type
+        io[:output].display(Messages.ask_for_emoji_type)
+        choice = get_emoji_type(io)
       end
       ['S', 's'].include?(choice) ? 'S' : nil
     end
 
-    def invalid_move
-      puts Messages.invalid_move
+    def invalid_move(io)
+      io[:output].display(Messages.invalid_move)
     end
 
     def show_game_over_message(result)
@@ -53,12 +53,12 @@ module Minesweeper
       result
     end
 
-    def get_emoji_type
+    def get_emoji_type(io)
       input = gets.chomp
       if InputValidator.emoji_type_has_correct_format(input)
         result = InputValidator.return_emoji_type(input)
       else
-        puts Messages.invalid_emoji_type_message
+        io[:output].display(Messages.invalid_emoji_type_message)
         result = nil
       end
       result

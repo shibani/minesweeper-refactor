@@ -34,15 +34,22 @@ class CliTest < Minitest::Test
   end
 
   def test_that_it_can_get_the_emoji_type_from_the_player
+    mock_io = {
+      output: "test",
+      input: "test"
+    }
     assert_output "You selected S, prepare for a surprise!\n" do
-      simulate_stdin("s") { @cli.get_emoji_type }
+      simulate_stdin("s") { @cli.get_emoji_type(mock_io) }
     end
   end
 
   def test_that_it_can_return_message_if_input_is_invalid
-    assert_output "That was not a valid choice. Please try again.\n" do
-      simulate_stdin("y") { @cli.get_emoji_type }
-    end
+    mock_io = {
+      output: Minesweeper::MockOutput.new,
+      input: "test"
+    }
+    simulate_stdin("y") { @cli.get_emoji_type(mock_io) }
+    assert "That was not a valid choice. Please try again.\n"
   end
 
   def test_that_it_can_capture_input_from_the_player_1
@@ -75,22 +82,26 @@ class CliTest < Minitest::Test
     io.rewind
     $stdin = io
 
-    result = @cli.get_player_input(@mock_game, mock_io)
+    out, _err = capture_io do
+      @cli.get_player_input(@mock_game, mock_io)
+    end
     $stdin = STDIN
 
-    assert_equal([5,6, "flag"], result)
+    assert_equal("You selected flag 5,6. Placing your flag.\n", out)
   end
 
-  def test_that_it_returns_the_bomb_count_if_valid
+  def test_that_it_returns_the_board_size_if_valid
     io = StringIO.new
     io.puts "16"
     io.rewind
     $stdin = io
 
-    result = @cli.get_player_entered_board_size
+    out, _err = capture_io do
+      @cli.get_player_entered_board_size
+    end
     $stdin = STDIN
 
-    assert_equal(16, result)
+    assert_equal("You have selected a 16 x 16 board. Generating board.\n", out)
   end
 
   def test_that_it_can_capture_a_bomb_count_from_the_player
@@ -105,10 +116,12 @@ class CliTest < Minitest::Test
     io.rewind
     $stdin = io
 
-    result = @cli.get_player_entered_bomb_count(100)
+    out, _err = capture_io do
+      @cli.get_player_entered_bomb_count(100)
+    end
     $stdin = STDIN
 
-    assert_equal(70, result)
+    assert_equal("You selected 70. Setting bombs!\n", out)
   end
 
   def test_that_it_can_get_and_set_the_board_size_and_bomb_count
@@ -152,18 +165,24 @@ class CliTest < Minitest::Test
     io.rewind
     $stdin = io
 
-    result = @cli.get_move(@mock_game, test_io)
+    out, _err = capture_io do
+      @cli.get_move(@mock_game, test_io)
+    end
     $stdin = STDIN
 
-    assert_equal([5,6, "move"], result)
+    assert_equal("You selected move 5,6. Placing your move.\n", out)
   end
 
   def test_that_it_can_return_a_string_if_invalid_move
+    test_io = {
+      output: Minesweeper::Output.new,
+      input: "test"
+    }
     out, _err = capture_io do
-      @cli.invalid_move
+      @cli.invalid_move(test_io)
     end
 
-    assert_equal("That was not a valid move. Please try again.\n", out)
+    assert_equal("That was not a valid move. Please try again.", out)
   end
 
   def test_that_it_can_return_the_game_over_message
