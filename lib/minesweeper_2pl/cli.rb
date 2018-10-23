@@ -73,12 +73,12 @@ module Minesweeper
       end
     end
 
-    def get_player_entered_board_size
+    def get_player_entered_board_size(io)
       input = gets.chomp
       if InputValidator.board_size_input_has_correct_format(input)
         InputValidator.return_row_size_if_input_is_within_range(input)
       else
-        puts Messages.invalid_row_size_message
+        io[:output].display(Messages.invalid_row_size_message)
       end
     end
 

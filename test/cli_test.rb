@@ -91,13 +91,17 @@ class CliTest < Minitest::Test
   end
 
   def test_that_it_returns_the_board_size_if_valid
+    mock_io = {
+      output: "test",
+      input: "test"
+    }
     io = StringIO.new
     io.puts "16"
     io.rewind
     $stdin = io
 
     out, _err = capture_io do
-      @cli.get_player_entered_board_size
+      @cli.get_player_entered_board_size(mock_io)
     end
     $stdin = STDIN
 
