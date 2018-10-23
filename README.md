@@ -24,5 +24,3 @@ ___
 ```
 ruby bin/minesweeper_2pl
 ```  
-
-___  

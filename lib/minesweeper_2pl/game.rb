@@ -1,27 +1,26 @@
 module Minesweeper
   class Game
     attr_accessor :game_over
-    attr_reader :board, :formatter, :board_printer, :icon_style
+    attr_reader :board, :formatter, :board_printer, :icon_style, :game_utils
 
     def initialize(board, cat_emoji=nil)
       @board = board
-
+      @game_utils = GameUtils.new
       @icon_style = cat_emoji ? CatEmoji.new : BombEmoji.new
       @formatter = BoardFormatter.new
       @board_printer = BoardPrinter.new
     end
 
     def get_position(move)
-      position = move_to_position(move)
-      board_positions[position]
+      game_utils.get_position(board, move)
     end
 
     def board_positions
-      board.positions
+      game_utils.board_positions(board)
     end
 
     def board_values
-      board_positions.map(&:value)
+      game_utils.board_values(board)
     end
 
     def set_cell_status(array)
@@ -31,11 +30,11 @@ module Minesweeper
     end
 
     def board_cell_status
-      board_positions.each_index.select{ |i| board_positions[i].status == 'revealed' }
+      game_utils.board_cell_status(board)
     end
 
     def board_flags
-      board_positions.each_index.select{ |i| board_positions[i].flag == 'F' }
+      game_utils.board_flags(board)
     end
 
     def print_board
@@ -44,65 +43,31 @@ module Minesweeper
     end
 
     def set_positions(array)
-      array.each.with_index do |position, i|
-        board_positions[i].update_cell_content(position)
-      end
-      board_positions.each.with_index do |position, i|
-        content = board_positions[i].content
-        if content == 'B'
-          board_positions[i].update_cell_value(content)
-        else
-          value = board.assign_value(i)
-          board_positions[i].update_cell_value(value)
-        end
-      end
+      update_cell_content(board, array)
+      update_cell_value(board)
     end
 
     def reassign_bomb(position)
-      new_bomb_array = bomb_positions - [position]
-      new_bomb_location = (((0...board.row_size ** 2 ).to_a) - bomb_positions).sample
+      new_bomb_array = game_utils.bomb_positions(board) - [position]
+      new_bomb_location = (((0...board.row_size ** 2 ).to_a) - game_utils.bomb_positions(board)).sample
       new_bomb_array << new_bomb_location
       board.bomb_positions = new_bomb_array
       board.set_positions
     end
 
     def place_move(move)
-      position = move_to_position(move)
-      if move.last == 'move'
-        if first_move?
-          reassign_bomb(position) if position_is_a_bomb?(position)
-          mark_move_on_board(position)
-        else
-          if position_has_a_non_zero_value?(position)
-            reveal_self(position)
-            board_positions[position].remove_flag unless position_is_a_bomb?(position)
-          else
-            mark_move_on_board(position)
-            board_positions[position].remove_flag unless position_is_a_bomb?(position)
-          end
-        end
-      elsif move.last == 'flag'
-        mark_flag_on_board(position)
-      end
+      position = game_utils.move_to_position(board, move)
+      mark_move_on_board(position) if move.last == 'move'
+      mark_flag_on_board(position) if move.last == 'flag'
       self.game_over = true if is_won?
     end
 
-    def show_bombs=(msg)
-      if msg == 'show'
-        formatter.show_bombs = 'show'
-      elsif msg == 'won'
-        formatter.show_bombs = 'won'
-      else
-        formatter.show_bombs = false
-      end
-    end
-
     def is_won?
-      all_bomb_positions_are_flagged?
+      game_utils.board_flags(board).sort == game_utils.bomb_positions(board).sort
     end
 
     def is_not_valid?(move=nil)
-      move.nil? || get_position(move).status == 'revealed'
+      game_utils.is_not_valid?(board, move)
     end
 
     def gameloop_check_status
@@ -111,27 +76,40 @@ module Minesweeper
     end
 
     def check_win_or_loss
-      if game_over
-        if is_won?
-          formatter.show_bombs = 'won'
-          print_board
-          result = 'win'
-        else
-          formatter.show_bombs = 'show'
-          print_board
-          result = 'lose'
-        end
+      if game_over && is_won?
+        set_print_format('won') 
+        result = 'win'
+      elsif game_over && !is_won?
+        set_print_format('show')
+        result = 'lose'
       end
+      print_board
       result
     end
 
     def mark_move_on_board(position)
-      if position_is_a_bomb?(position)
-        self.game_over = true
+      if game_utils.first_move?(board)
+        reassign_bomb(position) if game_utils.position_is_a_bomb?(board, position)
+        if game_utils.position_is_a_bomb?(board, position)
+          self.game_over = true
+        else
+          flood_fill(position)
+        end
+        update_cell_status(board, position)
       else
-        flood_fill(position)
+        if game_utils.position_has_a_non_zero_value?(board, position)
+          reveal_self(position)
+          game_utils.board_position_at(board, position).remove_flag unless game_utils.position_is_a_bomb?(board, position)
+        else
+          if game_utils.position_is_a_bomb?(board, position)
+            self.game_over = true
+          else
+            flood_fill(position)
+          end
+          update_cell_status(board, position)
+          board_positions[position].remove_flag unless game_utils.position_is_a_bomb?(board, position)
+        end
       end
-      board_positions[position].update_cell_status
     end
 
     def flood_fill(position)
@@ -145,80 +123,42 @@ module Minesweeper
     end
 
     def reveal_self(position)
-      board_positions[position].update_cell_status
+      game_utils.board_position_at(board, position).update_cell_status
     end
 
     def mark_flag_on_board(position)
-      mark_flag(position)
+      game_utils.mark_flag(board, position)
+    end
+
+    def set_print_format(msg)
+      if ['won', 'show'].include? msg
+        formatter.show_bombs = msg
+      else
+        formatter.show_bombs = false 
+      end
     end
 
     private
 
-    def move_to_position(move)
-      if move.is_a? Array
-        move[0] + board.row_size * move[1]
-      else
-        raise
+    def update_cell_content(board, array)
+      array.each.with_index do |position, i|
+        game_utils.board_position_at(board, i).update_cell_content(position)
       end
     end
 
-    def position_to_move(position)
-      [
-        (position % board.row_size).to_i,
-        (position / board.row_size).to_i
-      ]
-    end
-
-    def position_is_a_bomb?(position)
-      board.bomb_positions.include?(position)
-    end
-
-    def position_is_empty?(position)
-      board_positions[position].content == ' '
-    end
-
-    def position_is_flag?(position)
-      board_positions[position].flag == 'F'
-    end
-
-    def position_includes_a_flag?(position)
-      board_positions[position].flag == 'F'
-    end
-
-    def position_has_a_zero_value?(position)
-      (board_positions[position].value.is_a? Integer) && (board_positions[position].value == 0)
-    end
-
-    def position_has_a_non_zero_value?(position)
-      (board_positions[position].value.is_a? Integer) && (board_positions[position].value > 0)
-    end
-
-    def mark_board(position, content)
-      board_positions[position].update_cell_content(content)
-    end
-
-    def mark_flag(position)
-      cell = board_positions[position]
-      unless cell.status == 'revealed'
-        if cell.flag == "F"
-          cell.remove_flag
-        elsif cell.flag.nil?
-          cell.add_flag
+    def update_cell_value(board)
+      game_utils.board_positions(board).each.with_index do |position, i|
+        if position.content == 'B'
+          position.update_cell_value(position.content)
+        else
+          value = board.assign_value(i)
+          position.update_cell_value(value)
         end
       end
     end
 
-    def bomb_positions
-      board.bomb_positions
-    end
-
-    def all_bomb_positions_are_flagged?
-      board_flags.sort == bomb_positions.sort
-    end
-
-    def first_move?
-      revealed = board_positions.select{|el| el.status == 'revealed'}
-      revealed.empty?
+    def update_cell_status(board, position)
+      game_utils.board_position_at(board, position).update_cell_status
     end
   end
 end

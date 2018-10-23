@@ -21,7 +21,9 @@ module Minesweeper
       while args_hash[:cells_to_check].length.positive?
         cell = args_hash[:cells_to_check].first
         args_hash[:spaces_to_clear] = collect_spaces_to_clear(cell, args_hash).uniq
-        args_hash[:cells_to_check] = dedupe_cells_to_check(args_hash[:checked], collect_cells_to_check(cell, args_hash))
+        args_hash[:cells_to_check] = dedupe_cells_to_check(
+          args_hash[:checked], collect_cells_to_check(cell, args_hash)
+        )
         args_hash[:checked] << cell
       end
       args_hash[:spaces_to_clear]
@@ -36,7 +38,7 @@ module Minesweeper
 
     def collect_cells_to_check(cell, args_hash)
       @neighboring_cells.get_cells(args_hash[:positions], cell, args_hash[:row_size]).each do |cell_position|
-        args_hash[:cells_to_check] << cell_position if args_hash[:positions][cell_position].value == 0 
+        args_hash[:cells_to_check] << cell_position if args_hash[:positions][cell_position].value == 0
       end
       args_hash[:cells_to_check]
     end
