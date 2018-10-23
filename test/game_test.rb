@@ -180,7 +180,6 @@ class GameTest < Minitest::Test
   end
 
   def test_that_it_can_set_the_Formatters_show_bombs_attribute
-    #@game.show_bombs = "show"
     @game.set_print_format("show")
 
     assert_equal("show", @game.formatter.show_bombs)
@@ -193,7 +192,6 @@ class GameTest < Minitest::Test
   end
 
   def test_that_it_can_set_the_Formatters_show_bombs_attribute_to_won
-    #@game.show_bombs = "won"
     @game.set_print_format("won")
 
     assert_equal("won", @game.formatter.show_bombs)
