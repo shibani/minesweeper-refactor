@@ -180,19 +180,21 @@ class GameTest < Minitest::Test
   end
 
   def test_that_it_can_set_the_Formatters_show_bombs_attribute
-    @game.show_bombs = "show"
+    #@game.show_bombs = "show"
+    @game.set_print_format("show")
 
     assert_equal("show", @game.formatter.show_bombs)
   end
 
   def test_that_it_can_turn_off_the_Formatters_show_bombs_attribute
-    @game.show_bombs = "random string"
+    @game.set_print_format("random string")
 
     refute @game.formatter.show_bombs
   end
 
   def test_that_it_can_set_the_Formatters_show_bombs_attribute_to_won
-    @game.show_bombs = "won"
+    #@game.show_bombs = "won"
+    @game.set_print_format("won")
 
     assert_equal("won", @game.formatter.show_bombs)
   end
@@ -540,18 +542,6 @@ class GameTest < Minitest::Test
       @game.board_positions[el].update_cell_status }
 
     assert_equal(to_reveal, @game.board_cell_status)
-  end
-
-  def test_that_it_can_return_an_array_of_the_boards_flag_positions
-    bomb_positions = [10, 11, 12, 13, 14]
-    @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
-
-    to_flag = [20,21,22,23,24]
-    to_flag.each { |el|
-      @game.board_positions[el].add_flag }
-
-    assert_equal([20,21,22,23,24], @game.board_flags)
   end
 
   def test_that_it_can_set_the_status_of_an_array_of_cells_to_revealed
