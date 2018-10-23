@@ -10,7 +10,8 @@ class AppTest < Minitest::Test
   end
 
   def test_that_app_can_setup_and_return_a_new_game
-    result = @mock_app.setup_game(@mock_cli) 
+    @mock_output = Minesweeper::MockOutput.new
+    result = @mock_app.setup_game(@mock_cli, @mock_output) 
 
     assert_instance_of(Minesweeper::Game, result)
   end
