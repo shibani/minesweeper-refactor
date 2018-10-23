@@ -46,24 +46,36 @@ class CliTest < Minitest::Test
   end
 
   def test_that_it_can_capture_input_from_the_player_1
+    mock_io = {
+      output: "test",
+      input: "test"
+    }
     assert_output "You selected move 3,9. Placing your move.\n" do
-      simulate_stdin("move 3,9") { @cli.get_player_input(@mock_game) }
+      simulate_stdin("move 3,9") { @cli.get_player_input(@mock_game, mock_io) }
     end
   end
 
   def test_that_it_can_capture_input_from_the_player_2
+    mock_io = {
+      output: "test",
+      input: "test"
+    }
     assert_output "You selected flag 9,0. Placing your flag.\n" do
-      simulate_stdin("flag 9,0") { @cli.get_player_input(@mock_game) }
+      simulate_stdin("flag 9,0") { @cli.get_player_input(@mock_game, mock_io) }
     end
   end
 
   def test_that_it_returns_an_array_if_input_is_valid
+    mock_io = {
+      output: "test",
+      input: "test"
+    }
     io = StringIO.new
     io.puts "flag 5,6"
     io.rewind
     $stdin = io
 
-    result = @cli.get_player_input(@mock_game)
+    result = @cli.get_player_input(@mock_game, mock_io)
     $stdin = STDIN
 
     assert_equal([5,6, "flag"], result)
@@ -113,6 +125,10 @@ class CliTest < Minitest::Test
   end
 
   def test_that_the_start_method_returns_a_hash_for_the_game_config
+    mock_io = {
+      output: "test",
+      input: "test"
+    }
     io = StringIO.new
     io.puts "s"
     io.puts "10"
@@ -120,19 +136,23 @@ class CliTest < Minitest::Test
     io.rewind
     $stdin = io
 
-    result = @mock_cli.start
+    result = @mock_cli.start(mock_io)
     $stdin = STDIN
 
     assert_equal({ formatter: 'S', row_size: 10, bomb_count: 70 }, result)
   end
 
   def test_that_it_can_get_a_player_move
+    test_io = {
+      output: Minesweeper::MockOutput.new,
+      input: "test"
+    }
     io = StringIO.new
     io.puts "move 5,6"
     io.rewind
     $stdin = io
 
-    result = @cli.get_move(@mock_game)
+    result = @cli.get_move(@mock_game, test_io)
     $stdin = STDIN
 
     assert_equal([5,6, "move"], result)

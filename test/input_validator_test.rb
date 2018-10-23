@@ -53,21 +53,30 @@ class InputValidatorTest < Minitest::Test
   end
 
   def test_that_it_can_check_if_the_coordinates_are_less_than_the_rowsize
-    assert_output "Expecting 'flag' or 'move', with one digit from header and one digit from left column. Please try again!\n" do
-      simulate_stdin("3,12") { @cli.get_player_input(@mock_game) }
-    end
+    mock_io = {
+      output: Minesweeper::MockOutput.new,
+      input: "test"
+    }
+    simulate_stdin("3,12") { @cli.get_player_input(@mock_game, mock_io) }
+    assert "Expecting 'flag' or 'move', with one digit from header and one digit from left column. Please try again!\n"
   end
 
   def test_that_it_can_check_if_the_input_is_valid_1
-    assert_output "Expecting 'flag' or 'move', with one digit from header and one digit from left column. Please try again!\n" do
-      simulate_stdin("bad input") { @cli.get_player_input(@mock_game) }
-    end
+    mock_io = {
+      output: Minesweeper::MockOutput.new,
+      input: "test"
+    }
+    simulate_stdin("bad input") { @cli.get_player_input(@mock_game, mock_io) }
+    assert "Expecting 'flag' or 'move', with one digit from header and one digit from left column. Please try again!\n"
   end
 
   def test_that_it_can_check_if_the_input_is_valid_2
-    assert_output "Expecting 'flag' or 'move', with one digit from header and one digit from left column. Please try again!\n" do
-      simulate_stdin("flag A,8") { @cli.get_player_input(@mock_game) }
-    end
+    mock_io = {
+      output: Minesweeper::MockOutput.new,
+      input: "test"
+    }
+    simulate_stdin("flag A,8") { @cli.get_player_input(@mock_game, mock_io) }
+    assert "Expecting 'flag' or 'move', with one digit from header and one digit from left column. Please try again!\n"
   end
 
   def test_that_it_can_return_validated_coordinates

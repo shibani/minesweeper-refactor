@@ -4,19 +4,19 @@ module Minesweeper
       puts(msg)
     end
 
-    def start
-      print(Messages.welcome)
+    def start(io)
+      io[:output].display(Messages.welcome)
       game_config = {}
       game_config[:formatter] = ask_for_emoji_type
-      result = get_player_params
+      result = get_player_params(io)
       game_config[:row_size] = result[0].to_i
       game_config[:bomb_count] = result[1].to_i
       game_config
     end
 
-    def get_move(game)
-      puts Messages.ask_for_move
-      get_player_input(game)
+    def get_move(game, io)
+      io[:output].display(Messages.ask_for_move)
+      get_player_input(game, io)
     end
 
     def ask_for_emoji_type
@@ -36,17 +36,17 @@ module Minesweeper
       puts Messages.show_game_over_message(result)
     end
 
-    def get_player_params
+    def get_player_params(io)
       result = []
       size = nil
       while size.nil?
-        puts Messages.ask_for_row_size
+        io[:output].display(Messages.ask_for_row_size)
         size = get_player_entered_board_size
       end
       result << size
       count = nil
       while count.nil?
-        puts Messages.ask_for_bomb_count(size)
+        io[:output].display(Messages.ask_for_bomb_count(size))
         count = get_player_entered_bomb_count(size * size)
       end
       result << count
@@ -64,12 +64,12 @@ module Minesweeper
       result
     end
 
-    def get_player_input(game)
+    def get_player_input(game, io)
       input = gets.chomp
       if InputValidator.player_input_has_correct_format(input)
         InputValidator.return_coordinates_if_input_is_within_range(input, game)
       else
-        puts Messages.invalid_player_input_message
+        io[:output].display(Messages.invalid_player_input_message)
       end
     end
 

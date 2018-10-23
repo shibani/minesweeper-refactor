@@ -4,15 +4,18 @@ module Minesweeper
     MAX_ROW_NUM = 20
 
     def start
-      output = Output.new
+      io = {
+        output: Output.new,
+        input: Input.new
+      }
       cli = CLI.new
-      game = setup_game(cli, output)
+      game = setup_game(cli, io)
       play_game(game, cli)
       end_game(game, cli)
     end
 
-    def setup_game(cli, output)
-      game_config = cli.start
+    def setup_game(cli, io)
+      game_config = cli.start(io)
       board = Board.new(game_config[:row_size], game_config[:bomb_count])
       Game.new(board, game_config[:formatter])
     end
