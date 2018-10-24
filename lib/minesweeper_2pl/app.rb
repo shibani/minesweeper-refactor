@@ -11,7 +11,7 @@ module Minesweeper
       cli = CLI.new
       game = setup_game(cli, io)
       play_game(game, cli, io)
-      end_game(game, cli)
+      end_game(game, cli, io)
     end
 
     def setup_game(cli, io)
@@ -32,10 +32,10 @@ module Minesweeper
       game
     end
 
-    def end_game(game, cli)
+    def end_game(game, cli, io)
       result = game.check_win_or_loss
-      message = cli.show_game_over_message(result)
-      cli.print(message)
+      message = cli.show_game_over_message(result, io)
+      io[:output].display(message)
     end
 
     def game_is_over(game)

@@ -7,6 +7,8 @@ class AppTest < Minitest::Test
     @mock_game = Minesweeper::MockGame.new(@mock_board)
     @mock_cli = Minesweeper::MockCli.new
     @mock_app = Minesweeper::App.new
+    @mock_io = { output: Minesweeper::MockOutput.new, input: "test" }
+    @test_io = { output: Minesweeper::Output.new, input: "test" }
   end
 
   def test_that_app_can_setup_and_return_a_new_game
@@ -54,10 +56,6 @@ class AppTest < Minitest::Test
   end
 
   def test_play_game_runs_the_game_loop_and_can_check_if_a_move_is_valid
-    mock_io = {
-      output: Minesweeper::Output.new,
-      input: "test"
-    }
     flags = [7,10,11,12,13,14]
     flags.each { |fl| @mock_game.mark_flag_on_board(fl) }
     to_reveal = [0,1,2,3,4,5,6,7,8,9,15,16,17,18,19,20,21,22,23,24]
@@ -67,7 +65,7 @@ class AppTest < Minitest::Test
     @mock_cli.set_input!([1,0,"move"], [2,2,"move"])
 
     out, _err = capture_io do
-      @mock_app.play_game(@mock_game, @mock_cli, mock_io)
+      @mock_app.play_game(@mock_game, @mock_cli, @test_io)
     end
 
     assert_equal("That was not a valid move. Please try again.", out)
@@ -112,10 +110,10 @@ class AppTest < Minitest::Test
     @mock_game.game_over = true
 
     out, _err = capture_io do
-      @mock_app.end_game(@mock_game, @mock_cli)
+      @mock_app.end_game(@mock_game, @mock_cli, @test_io)
     end
 
-    assert_equal("Game over! You win!\n\n", out)
+    assert_equal("Game over! You win!", out)
   end
 
   def test_end_game_can_check_if_game_is_lost_and_outputs_a_message_accordingly
@@ -127,10 +125,10 @@ class AppTest < Minitest::Test
     @mock_game.game_over = true
 
     out, _err = capture_io do
-      @mock_app.end_game(@mock_game, @mock_cli)
+      @mock_app.end_game(@mock_game, @mock_cli, @test_io)
     end
 
-    assert_equal("Game over! You lose.\n\n", out)
+    assert_equal("Game over! You lose.", out)
   end
 
 end

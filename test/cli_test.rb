@@ -19,8 +19,9 @@ class CliTest < Minitest::Test
   end
 
   def test_that_it_can_write_to_the_console
+    test_io = { output: Minesweeper::Output.new, input: "test" }
     out, _err = capture_io do
-      @cli.print("welcome to minesweeper\n")
+      @cli.print("welcome to minesweeper\n", test_io)
     end
     assert_equal("welcome to minesweeper\n", out)
   end
@@ -154,12 +155,12 @@ class CliTest < Minitest::Test
   end
 
   def test_that_it_can_return_the_game_over_message
-    string = "Game over! You win!\n"
+    string = "Game over! You win!"
 
-    out, _err = capture_io do
-      @cli.show_game_over_message("win")
-    end
+    
+    result = @cli.show_game_over_message("win", @mock_io)
+    
 
-    assert_equal(out, string)
+    assert_equal(string, result)
   end
 end

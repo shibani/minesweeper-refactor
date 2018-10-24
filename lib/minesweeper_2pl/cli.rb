@@ -1,7 +1,7 @@
 module Minesweeper
   class CLI
-    def print(msg)
-      puts(msg)
+    def print(msg, io)
+      io[:output].display(msg)
     end
 
     def start(io)
@@ -32,8 +32,8 @@ module Minesweeper
       io[:output].display(Messages.invalid_move)
     end
 
-    def show_game_over_message(result)
-      puts Messages.show_game_over_message(result)
+    def show_game_over_message(result, io)
+      io[:output].display(Messages.show_game_over_message(result))
     end
 
     def get_player_params(io)
