@@ -54,7 +54,7 @@ module Minesweeper
     end
 
     def get_emoji_type(io)
-      input = gets.chomp
+      input = io[:input].get_input
       if InputValidator.emoji_type_has_correct_format(input)
         result = InputValidator.return_emoji_type(input)
       else
@@ -65,7 +65,7 @@ module Minesweeper
     end
 
     def get_player_input(game, io)
-      input = gets.chomp
+      input = io[:input].get_input
       if InputValidator.player_input_has_correct_format(input)
         InputValidator.return_coordinates_if_input_is_within_range(input, game)
       else
@@ -74,7 +74,7 @@ module Minesweeper
     end
 
     def get_player_entered_board_size(io)
-      input = gets.chomp
+      input = io[:input].get_input
       if InputValidator.board_size_input_has_correct_format(input)
         InputValidator.return_row_size_if_input_is_within_range(input)
       else
@@ -83,7 +83,7 @@ module Minesweeper
     end
 
     def get_player_entered_bomb_count(board_size, io)
-      input = gets.chomp
+      input = io[:input].get_input
       if InputValidator.bomb_count_input_has_correct_format(input)
         InputValidator.return_bomb_count_if_input_is_within_range(input, board_size)
       else

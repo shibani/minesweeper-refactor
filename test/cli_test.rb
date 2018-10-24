@@ -10,8 +10,7 @@ class CliTest < Minitest::Test
     @board = Minesweeper::Board.new(10,0)
     @mock_game = Minesweeper::MockGame.new(@board)
     @mock_cli = Minesweeper::MockCli.new
-    @mock_io = { output: Minesweeper::MockOutput.new, input: "test" }
-    @mock_io_2 = { output: "test", input: "test" }
+    @mock_io = { output: Minesweeper::MockOutput.new, input: Minesweeper::Input.new }
   end
 
   def test_that_it_has_a_cli_class
@@ -38,7 +37,7 @@ class CliTest < Minitest::Test
 
   def test_that_it_can_get_the_emoji_type_from_the_player
     assert_output "You selected S, prepare for a surprise!\n" do
-      simulate_stdin("s") { @cli.get_emoji_type(@mock_io_2) }
+      simulate_stdin("s") { @cli.get_emoji_type(@mock_io) }
     end
   end
 
@@ -49,13 +48,13 @@ class CliTest < Minitest::Test
 
   def test_that_it_can_capture_input_from_the_player_1
     assert_output "You selected move 3,9. Placing your move.\n" do
-      simulate_stdin("move 3,9") { @cli.get_player_input(@mock_game, @mock_io_2) }
+      simulate_stdin("move 3,9") { @cli.get_player_input(@mock_game, @mock_io) }
     end
   end
 
   def test_that_it_can_capture_input_from_the_player_2
     assert_output "You selected flag 9,0. Placing your flag.\n" do
-      simulate_stdin("flag 9,0") { @cli.get_player_input(@mock_game, @mock_io_2) }
+      simulate_stdin("flag 9,0") { @cli.get_player_input(@mock_game, @mock_io) }
     end
   end
 
@@ -66,7 +65,7 @@ class CliTest < Minitest::Test
     $stdin = io
 
     out, _err = capture_io do
-      @cli.get_player_input(@mock_game, @mock_io_2)
+      @cli.get_player_input(@mock_game, @mock_io)
     end
     $stdin = STDIN
 
@@ -80,7 +79,7 @@ class CliTest < Minitest::Test
     $stdin = io
 
     out, _err = capture_io do
-      @cli.get_player_entered_board_size(@mock_io_2)
+      @cli.get_player_entered_board_size(@mock_io)
     end
     $stdin = STDIN
 
@@ -89,7 +88,7 @@ class CliTest < Minitest::Test
 
   def test_that_it_can_capture_a_bomb_count_from_the_player
     assert_output "You selected 75. Setting bombs!\n" do
-      simulate_stdin("75") { @cli.get_player_entered_bomb_count(100, @mock_io_2) }
+      simulate_stdin("75") { @cli.get_player_entered_bomb_count(100, @mock_io) }
     end
   end
 
@@ -100,7 +99,7 @@ class CliTest < Minitest::Test
     $stdin = io
 
     out, _err = capture_io do
-      @cli.get_player_entered_bomb_count(100, @mock_io_2)
+      @cli.get_player_entered_bomb_count(100, @mock_io)
     end
     $stdin = STDIN
 

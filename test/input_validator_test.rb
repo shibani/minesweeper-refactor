@@ -12,8 +12,7 @@ class InputValidatorTest < Minitest::Test
     @mock_game = Minesweeper::MockGame.new(@board)
     @game = Minesweeper::Game.new(@board)
     @mock_cli = Minesweeper::MockCli.new
-    @mock_io = { output: Minesweeper::MockOutput.new, input: "test" }
-    @mock_io_2 = { output: "test", input: "test" }
+    @mock_io = { output: Minesweeper::MockOutput.new, input: Minesweeper::Input.new }
   end
 
   def test_that_it_can_check_if_emoji_type_input_has_correct_format
@@ -36,7 +35,7 @@ class InputValidatorTest < Minitest::Test
 
   def test_that_it_can_capture_a_board_size_from_the_player
     assert_output "You have selected a 10 x 10 board. Generating board.\n" do
-      simulate_stdin("10") {@cli.get_player_entered_board_size(@mock_io_2) }
+      simulate_stdin("10") {@cli.get_player_entered_board_size(@mock_io) }
     end
   end
 
@@ -47,7 +46,7 @@ class InputValidatorTest < Minitest::Test
 
   def test_that_it_can_check_if_entered_board_size_is_too_large
     assert_output "That is not a valid row size. Please try again.\n" do
-      simulate_stdin("35") { @cli.get_player_entered_board_size(@mock_io_2) }
+      simulate_stdin("35") { @cli.get_player_entered_board_size(@mock_io) }
     end
   end
 
