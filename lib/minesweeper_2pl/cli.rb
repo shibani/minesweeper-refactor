@@ -47,7 +47,7 @@ module Minesweeper
       count = nil
       while count.nil?
         io[:output].display(Messages.ask_for_bomb_count(size))
-        count = get_player_entered_bomb_count(size * size)
+        count = get_player_entered_bomb_count(size * size, io)
       end
       result << count
       result
@@ -82,12 +82,12 @@ module Minesweeper
       end
     end
 
-    def get_player_entered_bomb_count(board_size)
+    def get_player_entered_bomb_count(board_size, io)
       input = gets.chomp
       if InputValidator.bomb_count_input_has_correct_format(input)
         InputValidator.return_bomb_count_if_input_is_within_range(input, board_size)
       else
-        puts Messages.invalid_bomb_count_message
+        io[:output].display(Messages.invalid_bomb_count_message)
       end
     end
   end

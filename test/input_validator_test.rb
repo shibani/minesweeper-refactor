@@ -24,14 +24,13 @@ class InputValidatorTest < Minitest::Test
   end
 
   def test_that_it_can_check_if_entered_bomb_count_is_not_an_integer
-    assert_output "That is not a valid bomb count. Please try again.\n" do
-      simulate_stdin("test") { @cli.get_player_entered_bomb_count(100) }
-    end
+    simulate_stdin("test") { @cli.get_player_entered_bomb_count(100, @mock_io) }
+    assert "That is not a valid bomb count. Please try again.\n"
   end
 
   def test_that_it_can_check_if_entered_bomb_count_is_too_large
     assert_output "That is not a valid bomb count. Please try again.\n" do
-      simulate_stdin("105") { @cli.get_player_entered_bomb_count(100) }
+      simulate_stdin("105") { @cli.get_player_entered_bomb_count(100, @mock_io) }
     end
   end
 
