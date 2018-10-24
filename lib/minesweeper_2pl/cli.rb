@@ -33,6 +33,7 @@ module Minesweeper
     end
 
     def show_game_over_message(result, io)
+      #print_board(io)
       io[:output].display(Messages.show_game_over_message(result))
     end
 

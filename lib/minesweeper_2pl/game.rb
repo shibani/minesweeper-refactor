@@ -76,15 +76,8 @@ module Minesweeper
     end
 
     def check_win_or_loss(io)
-      if game_over && is_won?
-        set_print_format('won') 
-        result = 'win'
-      elsif game_over && !is_won?
-        set_print_format('show')
-        result = 'lose'
-      end
-      print_board(io)
-      result
+      return unless game_over
+      is_won? ? process_game_over(io, 'won') : process_game_over(io, 'show')
     end
 
     def mark_move_on_board(position)
@@ -130,12 +123,10 @@ module Minesweeper
       game_utils.mark_flag(board, position)
     end
 
-    def set_print_format(msg)
-      if ['won', 'show'].include? msg
-        formatter.show_bombs = msg
-      else
-        formatter.show_bombs = false 
-      end
+    def process_game_over(io, game_msg)
+      formatter.show_bombs = game_msg if ['won', 'show'].include? game_msg
+      print_board(io)
+      game_msg == 'won' ? 'win' : 'lose'
     end
 
     private

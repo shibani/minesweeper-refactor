@@ -6,6 +6,7 @@ class GameTest < Minitest::Test
     @board = Minesweeper::Board.new(5,5,[10,11,12,13,14])
     @game = Minesweeper::Game.new(@board)
     @mock_game = Minesweeper::MockGame.new(@board)
+    @mock_io = { output: Minesweeper::MockOutput.new, input: "test" }
     @test_io = { output: Minesweeper::Output.new, input: "test" }
   end
 
@@ -57,7 +58,6 @@ class GameTest < Minitest::Test
     assert_equal "printed board goes here", out
   end
 
-  
   def test_that_it_can_set_the_board_positions_with_an_array
     positions = [ " ", " ", " ", " ", " ",
                   " ", " ", " ", " ", " ",
@@ -180,20 +180,20 @@ class GameTest < Minitest::Test
     refute @game.game_over
   end
 
-  def test_that_it_can_set_the_Formatters_show_bombs_attribute
-    @game.set_print_format("show")
+  def test_that_it_can_set_the_formatters_show_bombs_attribute
+    @game.process_game_over(@mock_io, 'show')
 
-    assert_equal("show", @game.formatter.show_bombs)
+    assert_equal('show', @game.formatter.show_bombs)
   end
 
-  def test_that_it_can_turn_off_the_Formatters_show_bombs_attribute
-    @game.set_print_format("random string")
+  def test_that_it_can_turn_off_the_formatters_show_bombs_attribute
+    @game.process_game_over(@mock_io, 'random string')
 
     refute @game.formatter.show_bombs
   end
 
-  def test_that_it_can_set_the_Formatters_show_bombs_attribute_to_won
-    @game.set_print_format("won")
+  def test_that_it_can_set_the_formatters_show_bombs_attribute_to_won
+    @game.process_game_over(@mock_io, 'won')
 
     assert_equal("won", @game.formatter.show_bombs)
   end
