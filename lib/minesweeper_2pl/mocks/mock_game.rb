@@ -5,7 +5,7 @@ module Minesweeper
       @input = input
     end
 
-    def print_board
+    def print_board(io)
       print @input
     end
 

@@ -37,9 +37,9 @@ module Minesweeper
       game_utils.board_flags(board)
     end
 
-    def print_board
+    def print_board(io)
       board_array = formatter.format_board_with_emoji(board, icon_style)
-      board_printer.print_board(board_array, board)
+      board_printer.print_board(board_array, board, io)
     end
 
     def set_positions(array)
@@ -70,12 +70,12 @@ module Minesweeper
       game_utils.is_not_valid?(board, move)
     end
 
-    def gameloop_check_status
-      print_board if game_over != true
+    def gameloop_check_status(io)
+      print_board(io) if game_over != true
       game_over
     end
 
-    def check_win_or_loss
+    def check_win_or_loss(io)
       if game_over && is_won?
         set_print_format('won') 
         result = 'win'
@@ -83,7 +83,7 @@ module Minesweeper
         set_print_format('show')
         result = 'lose'
       end
-      print_board
+      print_board(io)
       result
     end
 

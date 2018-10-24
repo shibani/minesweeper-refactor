@@ -12,8 +12,8 @@ module Minesweeper
     HEADER_CELL_RIGHT = '  '
     INTRO = '     '
 
-    def print_board(board_array, board)
-      puts board_to_string(board_array, board)
+    def print_board(board_array, board, io)
+      io[:output].display(board_to_string(board_array, board))
     end
 
     def board_to_string(board_array, board)

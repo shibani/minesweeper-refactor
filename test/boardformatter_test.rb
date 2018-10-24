@@ -107,7 +107,7 @@ class BoardFormatterTest < Minitest::Test
     board_array = @formatter.format_board_with_emoji(@game.board, @game.icon_style)
     result = board_array[5]
 
-    assert_equal("\u{1f4a3}", result)
+    assert_equal("\u{1f4a3} ", result)
   end
 
   def test_that_it_can_show_trophies
@@ -128,7 +128,7 @@ class BoardFormatterTest < Minitest::Test
     board_array = @formatter.format_board_with_emoji(@game.board, @game.icon_style)
     result = board_array[10]
 
-    assert_equal("\u{1f3c6}", result)
+    assert_equal("\u{1f3c6} ", result)
   end
 
   def test_that_it_can_show_flags_1
@@ -143,7 +143,7 @@ class BoardFormatterTest < Minitest::Test
     board_array = @formatter.format_board_with_emoji(@game.board, @game.icon_style)
     result = board_array[5]
 
-    assert_equal("\u{1f6a9}", result)
+    assert_equal("\u{1f6a9} ", result)
   end
 
   def test_that_it_can_show_flags_2
@@ -158,7 +158,7 @@ class BoardFormatterTest < Minitest::Test
     board_array = @formatter.format_board_with_emoji(@game.board, @game.icon_style)
     result = board_array[5]
 
-    assert_equal("\u{1f6a9}", result)
+    assert_equal("\u{1f6a9} ", result)
   end
 
   def test_that_it_can_show_flags_3
@@ -174,7 +174,7 @@ class BoardFormatterTest < Minitest::Test
     board_array = @formatter.format_board_with_emoji(@game.board, @game.icon_style)
     result = board_array[12]
 
-    assert_equal("\u{1f6a9}", result)
+    assert_equal("\u{1f6a9} ", result)
   end
 
   def test_that_it_can_show_flags_if_the_game_is_lost
@@ -193,8 +193,8 @@ class BoardFormatterTest < Minitest::Test
     result1 = board_array[5]
     result2 = board_array[10]
 
-    assert_equal("\u{1f6a9}", result1)
-    assert_equal("\u{1f4a3}", result2)
+    assert_equal("\u{1f6a9} ", result1)
+    assert_equal("\u{1f4a3} ", result2)
   end
 
   def test_that_it_can_show_guessed_bombs_if_the_game_is_lost
@@ -369,7 +369,7 @@ class BoardFormatterTest < Minitest::Test
     board_array = @game2.formatter.format_board_with_emoji(@game2.board, @game2.icon_style)
     result = board_array[10]
 
-    assert_equal("\u{1F640}", result)
+    assert_equal("\u{1F640} ", result)
   end
 
   def test_that_it_can_show_bombs_1
@@ -385,7 +385,7 @@ class BoardFormatterTest < Minitest::Test
     board_array = @game2.formatter.format_board_with_emoji(@game2.board, @game2.icon_style)
     result = board_array[5]
 
-    assert_equal("\u{1F640}", result)
+    assert_equal("\u{1F640} ", result)
   end
 
   def test_that_it_can_show_trophies
@@ -406,7 +406,7 @@ class BoardFormatterTest < Minitest::Test
     board_array = @game2.formatter.format_board_with_emoji(@game2.board, @game2.icon_style)
     result = board_array[10]
 
-    assert_equal("\u{1F63A}", result)
+    assert_equal("\u{1F63A} ", result)
   end
 
   def test_that_it_can_show_flags_1
@@ -421,7 +421,7 @@ class BoardFormatterTest < Minitest::Test
     board_array = @game2.formatter.format_board_with_emoji(@game2.board, @game2.icon_style)
     result = board_array[5]
 
-    assert_equal("\u{1F364}", result)
+    assert_equal("\u{1F364} ", result)
   end
 
   def test_that_it_can_show_flags_2
@@ -436,7 +436,7 @@ class BoardFormatterTest < Minitest::Test
     board_array = @game2.formatter.format_board_with_emoji(@game2.board, @game2.icon_style)
     result = board_array[5]
 
-    assert_equal("\u{1F364}", result)
+    assert_equal("\u{1F364} ", result)
   end
 
   def test_that_it_can_show_flags_3
@@ -452,7 +452,7 @@ class BoardFormatterTest < Minitest::Test
     board_array = @game2.formatter.format_board_with_emoji(@game2.board, @game2.icon_style)
     result = board_array[12]
 
-    assert_equal("\u{1F364}", result)
+    assert_equal("\u{1F364} ", result)
   end
 
   def test_that_it_can_show_flags_if_the_game_is_lost
@@ -471,8 +471,8 @@ class BoardFormatterTest < Minitest::Test
     result1 = board_array[5]
     result2 = board_array[10]
 
-    assert_equal("\u{1F364}", result1)
-    assert_equal("\u{1F640}", result2)
+    assert_equal("\u{1F364} ", result1)
+    assert_equal("\u{1F640} ", result2)
   end
 
   def test_that_it_can_show_guessed_bombs_if_the_game_is_lost
@@ -501,11 +501,11 @@ class BoardFormatterTest < Minitest::Test
                   "B", "2", "0", "X", " ",
                   "B", "3", "0", "X", " ",
                   "B", "2", "0", "X", " " ]
-    converted_positions = ["\u{1F640}", "1 ", "0 ", "0 ", "0 ",
-                  "\u{1F364}", "2 ", "0 ", "0 ", "0 ",
-                  "\u{1F640}", "2 ", "\u{1F364}", "0 ", "0 ",
-                  "\u{1F640}", "3 ", "0 ", "0 ", "0 ",
-                  "\u{1F640}", "2 ", "0 ", "0 ", "0 "]
+    converted_positions = ["\u{1F640} ", "1 ", "0 ", "0 ", "0 ",
+                  "\u{1F364} ", "2 ", "0 ", "0 ", "0 ",
+                  "\u{1F640} ", "2 ", "\u{1F364} ", "0 ", "0 ",
+                  "\u{1F640} ", "3 ", "0 ", "0 ", "0 ",
+                  "\u{1F640} ", "2 ", "0 ", "0 ", "0 "]
     @game2.set_positions(positions)
     @game2.mark_flag_on_board(5)
     @game2.mark_flag_on_board(12)
@@ -524,11 +524,11 @@ class BoardFormatterTest < Minitest::Test
                   "B", "X", "X", "X", "X",
                   "B", "X", "X", "X", "X"]
     converted_positions = [
-                  "\u{1F63A}", "2 ", "0 ", "0 ", "0 ",
-                  "\u{1F63A}", "3 ", "0 ", "0 ", "0 ",
-                  "\u{1F63A}", "3 ", "0 ", "0 ", "0 ",
-                  "\u{1F63A}", "3 ", "0 ", "0 ", "0 ",
-                  "\u{1F63A}", "2 ", "0 ", "0 ", "0 "]
+                  "\u{1F63A} ", "2 ", "0 ", "0 ", "0 ",
+                  "\u{1F63A} ", "3 ", "0 ", "0 ", "0 ",
+                  "\u{1F63A} ", "3 ", "0 ", "0 ", "0 ",
+                  "\u{1F63A} ", "3 ", "0 ", "0 ", "0 ",
+                  "\u{1F63A} ", "2 ", "0 ", "0 ", "0 "]
     @game2.set_positions(positions)
     @game2.mark_flag_on_board(0)
     @game2.mark_flag_on_board(5)

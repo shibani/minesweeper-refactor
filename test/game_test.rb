@@ -6,6 +6,7 @@ class GameTest < Minitest::Test
     @board = Minesweeper::Board.new(5,5,[10,11,12,13,14])
     @game = Minesweeper::Game.new(@board)
     @mock_game = Minesweeper::MockGame.new(@board)
+    @test_io = { output: Minesweeper::Output.new, input: "test" }
   end
 
   def test_that_it_has_a_game_class
@@ -51,7 +52,7 @@ class GameTest < Minitest::Test
     @mock_game.set_input!("printed board goes here")
 
     out, err = capture_io do
-      @mock_game.print_board
+      @mock_game.print_board(@test_io)
     end
     assert_equal "printed board goes here", out
   end
@@ -267,7 +268,7 @@ class GameTest < Minitest::Test
     to_reveal.each { |el|
       mock_game.board_positions[el].update_cell_status }
 
-    refute(mock_game.gameloop_check_status)
+    refute(mock_game.gameloop_check_status(@test_io))
   end
 
   def test_that_gameloop_check_status_can_print_the_board
@@ -281,7 +282,7 @@ class GameTest < Minitest::Test
     mock_game.set_input!("display board")
 
     out, err = capture_io do
-      mock_game.gameloop_check_status
+      mock_game.gameloop_check_status(@test_io)
     end
 
     assert_equal("display board", out)
@@ -294,7 +295,7 @@ class GameTest < Minitest::Test
     bomb_positions.each { |flag| mock_game.mark_flag_on_board(flag) }
     mock_game.game_over = true
 
-    assert_equal("win", mock_game.check_win_or_loss)
+    assert_equal("win", mock_game.check_win_or_loss(@test_io))
   end
 
   def test_that_it_can_check_if_the_game_is_won_or_lost_2
@@ -306,7 +307,7 @@ class GameTest < Minitest::Test
     mock_game.place_move(move)
     mock_game.game_over = true
 
-    assert_equal('lose', mock_game.check_win_or_loss)
+    assert_equal('lose', mock_game.check_win_or_loss(@test_io))
   end
 
   def test_that_it_a_game_is_lost_all_its_bomb_positions_are_set_to_revealed
@@ -319,7 +320,7 @@ class GameTest < Minitest::Test
 
     mock_game.place_move(move)
     mock_game.game_over = true
-    mock_game.check_win_or_loss
+    mock_game.check_win_or_loss(@test_io)
 
     assert_equal('revealed', mock_game.board_positions[10].status)
   end

@@ -18,7 +18,7 @@ module Minesweeper
       @inputs
     end
 
-    def start
+    def start(io)
       game_config = {}
       game_config[:formatter] = "S"
       result = get_player_params
@@ -37,7 +37,7 @@ module Minesweeper
       result
     end
 
-    def get_move(game)
+    def get_move(game, io)
       get_player_input(game)
     end
 
