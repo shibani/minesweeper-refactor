@@ -37,7 +37,7 @@ module Minesweeper
       result
     end
 
-    def get_move(game)
+    def get_move(game, io)
       get_player_input(game)
     end
 
