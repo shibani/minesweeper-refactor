@@ -7,6 +7,7 @@ class BoardPrinterTest < Minitest::Test
     @game.formatter.show_bombs = 'show'
     @board_array = @game.formatter.format_board_with_emoji(@game.board, @game.icon_style)
     @board_printer = Minesweeper::BoardPrinter.new
+    @test_io = {output: Minesweeper::Output.new, input: Minesweeper::Input.new}
   end
 
   def test_that_it_returns_a_string_to_output_to_the_board
@@ -23,7 +24,7 @@ class BoardPrinterTest < Minitest::Test
 
   def test_that_it_prints_to_the_console
       out, _err = capture_io do
-        @board_printer.print_board(@board_array, @game.board)
+        @board_printer.print_board(@board_array, @game.board, @test_io)
       end
 
       assert_match /|  💣  |/, out

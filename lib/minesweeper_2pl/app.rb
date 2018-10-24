@@ -21,11 +21,11 @@ module Minesweeper
     end
 
     def play_game(game, cli, io)
-      until game_is_over(game)
+      until game_is_over(game, io)
         move = nil
         while game.is_not_valid?(move)
           cli.invalid_move(io) if move
-          move = cli.get_move(game)
+          move = cli.get_move(game, io)
         end
         game.place_move(move)
       end
@@ -33,13 +33,13 @@ module Minesweeper
     end
 
     def end_game(game, cli, io)
-      result = game.check_win_or_loss
+      result = game.check_win_or_loss(io)
       message = cli.show_game_over_message(result, io)
       io[:output].display(message)
     end
 
-    def game_is_over(game)
-      game.gameloop_check_status
+    def game_is_over(game, io)
+      game.gameloop_check_status(io)
     end
   end
 end

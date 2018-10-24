@@ -41,7 +41,7 @@ module Minesweeper
       size = nil
       while size.nil?
         io[:output].display(Messages.ask_for_row_size)
-        size = get_player_entered_board_size
+        size = get_player_entered_board_size(io)
       end
       result << size
       count = nil
@@ -56,7 +56,7 @@ module Minesweeper
     def get_emoji_type(io)
       input = io[:input].get_input
       if InputValidator.emoji_type_has_correct_format(input)
-        result = InputValidator.return_emoji_type(input)
+        result = InputValidator.return_emoji_type(input, io)
       else
         io[:output].display(Messages.invalid_emoji_type_message)
         result = nil
@@ -67,7 +67,7 @@ module Minesweeper
     def get_player_input(game, io)
       input = io[:input].get_input
       if InputValidator.player_input_has_correct_format(input)
-        InputValidator.return_coordinates_if_input_is_within_range(input, game)
+        InputValidator.return_coordinates_if_input_is_within_range(input, game, io)
       else
         io[:output].display(Messages.invalid_player_input_message)
       end
@@ -76,7 +76,7 @@ module Minesweeper
     def get_player_entered_board_size(io)
       input = io[:input].get_input
       if InputValidator.board_size_input_has_correct_format(input)
-        InputValidator.return_row_size_if_input_is_within_range(input)
+        InputValidator.return_row_size_if_input_is_within_range(input, io)
       else
         io[:output].display(Messages.invalid_row_size_message)
       end
@@ -85,7 +85,7 @@ module Minesweeper
     def get_player_entered_bomb_count(board_size, io)
       input = io[:input].get_input
       if InputValidator.bomb_count_input_has_correct_format(input)
-        InputValidator.return_bomb_count_if_input_is_within_range(input, board_size)
+        InputValidator.return_bomb_count_if_input_is_within_range(input, board_size, io)
       else
         io[:output].display(Messages.invalid_bomb_count_message)
       end
