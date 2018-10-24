@@ -29,7 +29,7 @@ module Minesweeper
     end
 
     def self.ask_for_bomb_count(size)
-      "Player 1 please enter the number of bombs there should be on the board. \n(The number should not be more than #{(size * size * App::BOMB_PERCENT).to_i})"
+      "\nPlayer 1 please enter the number of bombs there should be on the board. \n(The number should not be more than #{(size * size * App::BOMB_PERCENT).to_i})\n"
     end
 
     def self.invalid_move
@@ -46,9 +46,9 @@ module Minesweeper
 
     def self.show_game_over_message(result)
       if result == 'win'
-        'Game over! You win!'
+        "\nGame over! You win!\n"
       elsif result == 'lose'
-        'Game over! You lose.'
+        "\nGame over! You lose.\n"
       end
     end
 

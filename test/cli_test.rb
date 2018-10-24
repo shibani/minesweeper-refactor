@@ -154,7 +154,7 @@ class CliTest < Minitest::Test
   end
 
   def test_that_it_can_return_the_game_over_message
-    string = 'Game over! You win!'
+    string = "\nGame over! You win!\n"
 
     out, _err = capture_io do
       @cli.show_game_over_message('win', @test_io)

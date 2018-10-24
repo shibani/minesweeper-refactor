@@ -61,14 +61,14 @@ class MessagesTest < Minitest::Test
   end
 
   def test_that_it_can_ask_player_to_set_bomb_count
-    assert_equal("Player 1 please enter the number of bombs there should be on the board. \n(The number should not be more than 75)", @cli.ask_for_bomb_count(10))
+    assert_includes(@cli.ask_for_bomb_count(10), "\nPlayer 1 please enter the number of bombs there should be on the board. \n(The number should not be more than 75)\n")
   end
 
   def test_that_it_has_a_show_game_lost_message
-    assert_equal("Game over! You lose.", @cli.show_game_over_message("lose"))
+    assert_equal("\nGame over! You lose.\n", @cli.show_game_over_message("lose"))
   end
 
   def test_that_it_has_a_show_game_won_message
-    assert_equal("Game over! You win!", @cli.show_game_over_message("win"))
+    assert_equal("\nGame over! You win!\n", @cli.show_game_over_message("win"))
   end
 end

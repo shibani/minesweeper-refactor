@@ -104,7 +104,7 @@ class AppTest < Minitest::Test
       @mock_app.end_game(@mock_game, @mock_cli, @test_io)
     end
 
-    assert_equal('Game over! You win!', out)
+    assert_equal("\nGame over! You win!\n", out)
   end
 
   def test_end_game_can_check_if_game_is_lost_and_outputs_a_message_accordingly
@@ -119,7 +119,7 @@ class AppTest < Minitest::Test
       @mock_app.end_game(@mock_game, @mock_cli, @test_io)
     end
 
-    assert_equal('Game over! You lose.', out)
+    assert_equal("\nGame over! You lose.\n", out)
   end
 
 end
