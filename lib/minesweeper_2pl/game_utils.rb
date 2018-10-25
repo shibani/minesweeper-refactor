@@ -62,7 +62,7 @@ module Minesweeper
     end
 
     def position_has_a_zero_value?(board, position)
-      (board_position_at(board, position).value.is_a? Integer) && (board_positions(board)[position].value == 0)
+      !position_has_a_non_zero_value?(board, position)
     end
 
     def position_has_a_non_zero_value?(board, position)

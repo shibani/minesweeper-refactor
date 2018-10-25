@@ -428,17 +428,6 @@ class GameTest < Minitest::Test
     refute @game.game_over
   end
 
-  def test_that_reveal_self_can_set_status_of_position_to_revealed
-    bomb_positions = [10, 11, 12, 13, 14]
-    @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
-    position = 15
-
-    @game.reveal_position_no_flood_fill(position)
-
-    assert_equal('revealed', @game.board_positions[position].status)
-  end
-
   def test_that_reassign_bombs_can_update_the_bombs_positions_array
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
