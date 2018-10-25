@@ -17,7 +17,7 @@ module Minesweeper
       @value = value
     end
 
-    def update_cell_status
+    def revealed_status
       @status = 'revealed'
     end
 

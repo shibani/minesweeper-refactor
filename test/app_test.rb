@@ -31,7 +31,7 @@ class AppTest < Minitest::Test
     flags.each { |fl| @mock_game.mark_flag_on_board(fl) }
     to_reveal = [0,1,2,3,4,5,6,7,8,9,15,16,17,18,19,20,21,22,23,24]
     to_reveal.each { |el|
-      @mock_game.board_positions[el].update_cell_status }
+      @mock_game.board_positions[el].revealed_status }
 
     refute(@mock_app.game_is_over(@mock_game, @test_io))
   end
@@ -41,7 +41,7 @@ class AppTest < Minitest::Test
     flags.each { |fl| @mock_game.mark_flag_on_board(fl) }
     to_reveal = [0,1,2,3,4,5,6,7,8,9,15,16,17,18,19,20,21,22,23,24]
     to_reveal.each { |el|
-      @mock_game.board_positions[el].update_cell_status }
+      @mock_game.board_positions[el].revealed_status }
     @mock_cli.reset_count
     @mock_cli.set_input!([2,2,'move'], nil)
 
@@ -55,7 +55,7 @@ class AppTest < Minitest::Test
     flags.each { |fl| @mock_game.mark_flag_on_board(fl) }
     to_reveal = [0,1,2,3,4,5,6,7,8,9,15,16,17,18,19,20,21,22,23,24]
     to_reveal.each { |el|
-      @mock_game.board_positions[el].update_cell_status }
+      @mock_game.board_positions[el].revealed_status }
     @mock_cli.reset_count
     @mock_cli.set_input!([1,0,'move'], [2,2,'move'])
 
@@ -80,7 +80,7 @@ class AppTest < Minitest::Test
     flags.each { |fl| @mock_game.mark_flag_on_board(fl) }
     to_reveal = [0,1,2,3,4,5,6,7,8,9,15,16,17,18,19,20,21,22,23,24]
     to_reveal.each { |el|
-      @mock_game.board_positions[el].update_cell_status }
+      @mock_game.board_positions[el].revealed_status }
     @mock_game.game_over = true
 
     assert_equal('win', @mock_game.check_win_or_loss(@test_io))
@@ -97,7 +97,7 @@ class AppTest < Minitest::Test
     flags.each { |fl| @mock_game.mark_flag_on_board(fl) }
     to_reveal = [0,1,2,3,4,5,6,7,8,9,15,16,17,18,19,20,21,22,23,24]
     to_reveal.each { |el|
-      @mock_game.board_positions[el].update_cell_status }
+      @mock_game.board_positions[el].revealed_status }
     @mock_game.game_over = true
 
     out, _err = capture_io do
@@ -112,7 +112,7 @@ class AppTest < Minitest::Test
     flags.each { |fl| @mock_game.mark_flag_on_board(fl) }
     to_reveal = [0,1,2,3,4,5,6,7,8,9,12,15,16,17,18,19,20,21,22,23,24]
     to_reveal.each { |el|
-      @mock_game.board_positions[el].update_cell_status }
+      @mock_game.board_positions[el].revealed_status }
     @mock_game.game_over = true
 
     out, _err = capture_io do

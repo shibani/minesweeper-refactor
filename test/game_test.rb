@@ -105,7 +105,7 @@ class GameTest < Minitest::Test
     flags.each { |fl| @game.mark_flag_on_board(fl) }
     to_reveal = [0,1,2,3,4,5,6,7,8,15,16,17,18,19,20,21,22,23,24]
     to_reveal.each { |el|
-      @game.board_positions[el].update_cell_status }
+      @game.board_positions[el].revealed_status }
     move = [3, 2, 'move']
 
     @game.place_move(move)
@@ -144,7 +144,7 @@ class GameTest < Minitest::Test
     flags.each { |fl| @game.mark_flag_on_board(fl) }
     to_reveal = [0,1,2,3,4,5,6,7,8,9,15,16,17,18,19,20,21,22,23,24]
     to_reveal.each { |el|
-      @game.board_positions[el].update_cell_status }
+      @game.board_positions[el].revealed_status }
     move = [2,2, 'flag']
 
     @game.place_move(move)
@@ -206,7 +206,7 @@ class GameTest < Minitest::Test
     flags.each { |fl| @game.mark_flag_on_board(fl) }
     to_reveal = [0,1,2,3,4,5,6,7,8,9,15,16,17,18,19,20,21,22,23,24]
     to_reveal.each { |el|
-      @game.board_positions[el].update_cell_status }
+      @game.board_positions[el].revealed_status }
     move = [2,2, "flag"]
 
     @game.place_move(move)
@@ -222,7 +222,7 @@ class GameTest < Minitest::Test
     flags.each { |fl| @game.mark_flag_on_board(fl) }
     to_reveal = [0,1,2,3,4,5,6,7,8,9,15,16,17,18,19,20,21,22,23,24]
     to_reveal.each { |el|
-      @game.board_positions[el].update_cell_status }
+      @game.board_positions[el].revealed_status }
 
     assert(@game.is_won?)
   end
@@ -233,7 +233,7 @@ class GameTest < Minitest::Test
     @game = Minesweeper::Game.new(@board)
     to_reveal =  [0,1,2,3,4,5,6,7,8,9,15,16,17,18,19,20,21,22,23,24]
     to_reveal.each { |el|
-      @game.board_positions[el].update_cell_status }
+      @game.board_positions[el].revealed_status }
     refute(@game.is_won?)
   end
 
@@ -243,7 +243,7 @@ class GameTest < Minitest::Test
     @game = Minesweeper::Game.new(@board)
     to_reveal = [0,1,2,3,4]
     to_reveal.each { |el|
-      @game.board_positions[el].update_cell_status }
+      @game.board_positions[el].revealed_status }
     move = [0,0, "move"]
 
     assert(@game.is_not_valid?(move))
@@ -266,7 +266,7 @@ class GameTest < Minitest::Test
     flags.each { |fl| mock_game.mark_flag_on_board(fl) }
     to_reveal = [0,1,2,3,4,8,9,15,16,17,18,19,20,21,22,23,24]
     to_reveal.each { |el|
-      mock_game.board_positions[el].update_cell_status }
+      mock_game.board_positions[el].revealed_status }
 
     refute(mock_game.gameloop_check_status(@test_io))
   end
@@ -367,7 +367,7 @@ class GameTest < Minitest::Test
 
     to_reveal = [0,1,2,3,4,5,6,7,8,9,15,16,17,18,19,20,21,22,23,24]
     to_reveal.each { |el|
-      @game.board_positions[el].update_cell_status }
+      @game.board_positions[el].revealed_status }
 
     @game.mark_flag_on_board(4)
 
@@ -391,7 +391,7 @@ class GameTest < Minitest::Test
     @game = Minesweeper::Game.new(@board)
     to_reveal = [20,21,22,23,24]
     to_reveal.each { |el|
-      @game.board_positions[el].update_cell_status }
+      @game.board_positions[el].revealed_status }
     result = @game.flood_fill(9)
 
     assert_equal([8,3,4,2,7,1,6,0,5,9].sort, result.sort)
@@ -434,7 +434,7 @@ class GameTest < Minitest::Test
     @game = Minesweeper::Game.new(@board)
     position = 15
 
-    @game.reveal_self(position)
+    @game.reveal_position_no_flood_fill(position)
 
     assert_equal('revealed', @game.board_positions[position].status)
   end
@@ -538,7 +538,7 @@ class GameTest < Minitest::Test
 
     to_reveal = [20,21,22,23,24]
     to_reveal.each { |el|
-      @game.board_positions[el].update_cell_status }
+      @game.board_positions[el].revealed_status }
 
     assert_equal(to_reveal, @game.board_cell_status)
   end

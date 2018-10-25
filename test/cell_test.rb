@@ -22,7 +22,7 @@ class CellTest < Minitest::Test
   end
 
   def test_that_the_status_of_the_cell_can_be_updated
-    @cell1.update_cell_status
+    @cell1.revealed_status
     assert_equal 'revealed', @cell1.status
   end
 

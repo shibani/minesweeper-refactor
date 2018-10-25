@@ -25,7 +25,7 @@ module Minesweeper
 
     def set_cell_status(array)
       array.each do |el|
-        board_positions[el].update_cell_status
+        board_positions[el].revealed_status
       end
     end
 
@@ -47,11 +47,14 @@ module Minesweeper
       update_cell_value(board)
     end
 
-    def reassign_bomb(position)
-      new_bomb_array = game_utils.bomb_positions(board) - [position]
+    def create_new_bomb_array(position)
+      remove_bomb_from_bomb_array = game_utils.bomb_positions(board) - [position]
       new_bomb_location = (((0...board.row_size ** 2 ).to_a) - game_utils.bomb_positions(board)).sample
-      new_bomb_array << new_bomb_location
-      board.bomb_positions = new_bomb_array
+      remove_bomb_from_bomb_array << new_bomb_location
+    end
+
+    def reassign_bomb(position)
+      board.bomb_positions = create_new_bomb_array(position)
       board.set_positions
     end
 
@@ -83,40 +86,37 @@ module Minesweeper
     def mark_move_on_board(position)
       if game_utils.first_move?(board)
         reassign_bomb(position) if game_utils.position_is_a_bomb?(board, position)
-        if game_utils.position_is_a_bomb?(board, position)
-          self.game_over = true
-        else
-          flood_fill(position)
-        end
-        update_cell_status(board, position)
+        reveal_position_with_flood_fill(board, position)
+        revealed_status(board, position)
       else
         if game_utils.position_has_a_non_zero_value?(board, position)
-          reveal_self(position)
+          reveal_position_no_flood_fill(position)
           game_utils.board_position_at(board, position).remove_flag unless game_utils.position_is_a_bomb?(board, position)
         else
-          if game_utils.position_is_a_bomb?(board, position)
-            self.game_over = true
-          else
-            flood_fill(position)
-          end
-          update_cell_status(board, position)
-          board_positions[position].remove_flag unless game_utils.position_is_a_bomb?(board, position)
+          reveal_position_with_flood_fill(board, position)
+          revealed_status(board, position)
+          game_utils.board_position_at(board, position).remove_flag unless game_utils.position_is_a_bomb?(board, position)
         end
       end
+    end
+
+    def reveal_position_with_flood_fill(board, position)
+      game_utils.position_is_a_bomb?(board, position) ? self.game_over = true : flood_fill(position)
+    end
+
+    def reveal_position_no_flood_fill(position)
+      game_utils.board_position_at(board, position).revealed_status
     end
 
     def flood_fill(position)
       cells_to_reveal = []
       result = board.show_adjacent_empties_with_value(position)
       result.each do |adj_position|
-        cells_to_reveal << adj_position unless board_positions[adj_position].status == 'revealed' || board_positions[adj_position].flag == 'F'
-        board_positions[adj_position].update_cell_status unless board_positions[adj_position].flag == 'F'
+        adjacent_cell = game_utils.board_position_at(board, adj_position)
+        cells_to_reveal << adj_position unless adjacent_cell.status == 'revealed' || adjacent_cell.flag == 'F'
+        adjacent_cell.revealed_status unless adjacent_cell.flag == 'F'
       end
       cells_to_reveal + [position]
-    end
-
-    def reveal_self(position)
-      game_utils.board_position_at(board, position).update_cell_status
     end
 
     def mark_flag_on_board(position)
@@ -148,8 +148,8 @@ module Minesweeper
       end
     end
 
-    def update_cell_status(board, position)
-      game_utils.board_position_at(board, position).update_cell_status
+    def revealed_status(board, position)
+      game_utils.board_position_at(board, position).revealed_status
     end
   end
 end
