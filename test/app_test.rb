@@ -7,12 +7,17 @@ class AppTest < Minitest::Test
     @mock_game = Minesweeper::MockGame.new(@mock_board)
     @mock_cli = Minesweeper::MockCli.new
     @mock_app = Minesweeper::App.new
-    @test_io = { output: Minesweeper::Output.new, input: "test" }
+    @test_io = { 
+      output: Minesweeper::Output.new, 
+      input: 'test',
+      board_formatter: Minesweeper::BoardFormatter.new,
+      board_printer: Minesweeper::MockBoardPrinter.new
+    }
   end
 
   def test_that_app_can_setup_and_return_a_new_game
     @mock_output = Minesweeper::MockOutput.new
-    result = @mock_app.setup_game(@mock_cli, @mock_output) 
+    result = @mock_app.setup_game(@mock_cli, @test_io) 
 
     assert_instance_of(Minesweeper::Game, result)
   end
@@ -33,7 +38,7 @@ class AppTest < Minitest::Test
     to_reveal.each { |el|
       @mock_game.board_positions[el].revealed_status }
 
-    refute(@mock_app.game_is_over(@mock_game, @test_io))
+    refute(@mock_game.game_over)
   end
 
   def test_play_game_runs_the_game_loop_and_places_moves
@@ -47,7 +52,7 @@ class AppTest < Minitest::Test
 
     @mock_app.play_game(@mock_game, @mock_cli, @test_io)
 
-    assert(@mock_app.game_is_over(@mock_game, @test_io))
+    assert(@mock_game.game_over)
   end
 
   def test_play_game_runs_the_game_loop_and_can_check_if_a_move_is_valid

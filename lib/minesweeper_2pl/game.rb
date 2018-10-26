@@ -73,11 +73,6 @@ module Minesweeper
       game_utils.is_not_valid?(board, move)
     end
 
-    def gameloop_check_status(io)
-      print_board(io) if game_over != true
-      game_over
-    end
-
     def check_win_or_loss(io)
       return unless game_over
       is_won? ? process_game_over(io, 'won') : process_game_over(io, 'show')
@@ -117,7 +112,7 @@ module Minesweeper
 
     def process_game_over(io, game_msg)
       formatter.show_bombs = game_msg if ['won', 'show'].include? game_msg
-      print_board(io)
+      #print_board(io)
       game_msg == 'won' ? 'win' : 'lose'
     end
 

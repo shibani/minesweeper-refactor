@@ -1,5 +1,6 @@
 module Minesweeper
   class CLI
+
     def print(msg, io)
       io[:output].display(msg)
     end
@@ -12,6 +13,13 @@ module Minesweeper
       game_config[:row_size] = result[0].to_i
       game_config[:bomb_count] = result[1].to_i
       game_config
+    end
+
+    def print_board(board, io, icon_style=BombEmoji.new)
+      board_printer = io[:board_printer]
+      board_formatter = io[:board_formatter]
+      board_array = board_formatter.format_board_with_emoji(board, icon_style)
+      board_printer.print_board(board_array, board, io)
     end
 
     def get_move(game, io)
@@ -33,7 +41,6 @@ module Minesweeper
     end
 
     def show_game_over_message(result, io)
-      #print_board(io)
       io[:output].display(Messages.show_game_over_message(result))
     end
 

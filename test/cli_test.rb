@@ -11,7 +11,11 @@ class CliTest < Minitest::Test
     @mock_game = Minesweeper::MockGame.new(@board)
     @mock_cli = Minesweeper::MockCli.new
     @mock_io = { output: Minesweeper::MockOutput.new, input: Minesweeper::Input.new }
-    @test_io = { output: Minesweeper::Output.new, input: Minesweeper::Input.new }
+    @test_io = { 
+      output: Minesweeper::Output.new, 
+      input: Minesweeper::Input.new, 
+      board_formatter: Minesweeper::BoardFormatter.new, 
+      board_printer: Minesweeper::BoardPrinter.new }
   end
 
   def test_that_it_has_a_cli_class
@@ -162,5 +166,20 @@ class CliTest < Minitest::Test
     $stdin = STDIN
 
     assert_equal(string, out)
+  end
+
+  def test_that_it_can_print_the_board
+    bomb_positions = [10, 11, 12, 13, 14]
+    board = Minesweeper::Board.new(5, 5, bomb_positions)
+    icon_style = Minesweeper::BombEmoji.new
+
+    out, _err = capture_io do
+      @cli.print_board(board, @test_io)
+    end
+    $stdin = STDIN
+
+    expected = "\n         0      1      2      3      4  \n     +======+======+======+======+======+\n   0 |      |      |      |      |      |\n     +======+======+======+======+======+"
+
+    assert_includes(out, expected)
   end
 end
