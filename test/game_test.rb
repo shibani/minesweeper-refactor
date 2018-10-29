@@ -285,7 +285,7 @@ class GameTest < Minitest::Test
     assert_equal('lose', mock_game.check_win_or_loss)
   end
 
-  def test_that_it_a_game_is_lost_all_its_bomb_positions_are_set_to_revealed
+  def test_that_if_a_game_is_lost_all_its_bomb_positions_are_set_to_revealed
     bomb_positions = [10, 11, 12, 13, 14]
     board = Minesweeper::Board.new(5, 5, bomb_positions)
     mock_game = Minesweeper::MockGame.new(board, @test_io)
