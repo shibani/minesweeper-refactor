@@ -88,13 +88,13 @@ class AppTest < Minitest::Test
       @mock_game.board_positions[el].revealed_status }
     @mock_game.game_over = true
 
-    assert_equal('win', @mock_game.check_win_or_loss(@test_io))
+    assert_equal('win', @mock_game.check_win_or_loss)
   end
 
   def test_end_game_can_check_if_the_game_is_lost
     @mock_game.game_over = true
 
-    assert_equal('lose', @mock_game.check_win_or_loss(@test_io))
+    assert_equal('lose', @mock_game.check_win_or_loss)
   end
 
   def test_end_game_can_check_if_game_is_won_and_outputs_a_message_accordingly

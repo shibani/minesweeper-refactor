@@ -68,7 +68,7 @@ module Minesweeper
       game_utils.is_not_valid?(board, move)
     end
 
-    def check_win_or_loss(io)
+    def check_win_or_loss
       return unless game_over
       is_won? ? process_game_over('won') : process_game_over('show')
     end

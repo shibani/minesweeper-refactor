@@ -36,7 +36,7 @@ module Minesweeper
     end
 
     def end_game(game, cli, io)
-      result = game.check_win_or_loss(io)
+      result = game.check_win_or_loss
       cli.print_board(game.board, io, game.icon_style)
       message = cli.show_game_over_message(result, io)
       io[:output].display(message)

@@ -174,7 +174,7 @@ class CliTest < Minitest::Test
     icon_style = Minesweeper::BombEmoji.new
 
     out, _err = capture_io do
-      @cli.print_board(board, @test_io)
+      @cli.print_board(board, @test_io, icon_style)
     end
     $stdin = STDIN
 

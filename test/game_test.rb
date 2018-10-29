@@ -270,7 +270,7 @@ class GameTest < Minitest::Test
     bomb_positions.each { |flag| mock_game.mark_flag_on_board(flag) }
     mock_game.game_over = true
 
-    assert_equal("win", mock_game.check_win_or_loss(@test_io))
+    assert_equal("win", mock_game.check_win_or_loss)
   end
 
   def test_that_it_can_check_if_the_game_is_won_or_lost_2
@@ -282,7 +282,7 @@ class GameTest < Minitest::Test
     mock_game.place_move(move)
     mock_game.game_over = true
 
-    assert_equal('lose', mock_game.check_win_or_loss(@test_io))
+    assert_equal('lose', mock_game.check_win_or_loss)
   end
 
   def test_that_it_a_game_is_lost_all_its_bomb_positions_are_set_to_revealed
@@ -295,7 +295,7 @@ class GameTest < Minitest::Test
 
     mock_game.place_move(move)
     mock_game.game_over = true
-    mock_game.check_win_or_loss(@test_io)
+    mock_game.check_win_or_loss
 
     assert_equal('revealed', mock_game.board_positions[10].status)
   end
