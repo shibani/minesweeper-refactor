@@ -76,7 +76,7 @@ module Minesweeper
     def mark_flag(board, position)
       cell = board_position_at(board, position)
       unless cell.status == 'revealed'
-        if cell.flag == "F"
+        if cell.flag == 'F'
           cell.remove_flag
         elsif cell.flag.nil?
           cell.add_flag

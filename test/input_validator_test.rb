@@ -9,10 +9,10 @@ class InputValidatorTest < Minitest::Test
     @validator = Minesweeper::InputValidator
     @cli = Minesweeper::CLI.new
     @board = Minesweeper::Board.new(10,10)
-    @mock_game = Minesweeper::MockGame.new(@board)
-    @game = Minesweeper::Game.new(@board)
     @mock_cli = Minesweeper::MockCli.new
     @test_io = { output: Minesweeper::Output.new, input: Minesweeper::Input.new }
+    @mock_game = Minesweeper::MockGame.new(@board, @test_io)
+    @game = Minesweeper::Game.new(@board, @test_io)
   end
 
   def test_that_it_can_check_if_emoji_type_input_has_correct_format

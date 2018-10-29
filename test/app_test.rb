@@ -4,7 +4,6 @@ class AppTest < Minitest::Test
   def setup
     bomb_positions = [10, 11, 12, 13, 14]
     @mock_board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @mock_game = Minesweeper::MockGame.new(@mock_board)
     @mock_cli = Minesweeper::MockCli.new
     @mock_app = Minesweeper::App.new
     @test_io = { 
@@ -13,6 +12,7 @@ class AppTest < Minitest::Test
       board_formatter: Minesweeper::BoardFormatter.new,
       board_printer: Minesweeper::MockBoardPrinter.new
     }
+    @mock_game = Minesweeper::MockGame.new(@mock_board, @test_io)
   end
 
   def test_that_app_can_setup_and_return_a_new_game
@@ -25,7 +25,7 @@ class AppTest < Minitest::Test
   def test_that_initialize_can_get_player_input_and_set_the_formatter_type_and_rows_and_bomb_count
     @cli = Minesweeper::MockCli.new
     @board = Minesweeper::Board.new(10,7)
-    @mock_game = Minesweeper::Game.new(@board)
+    @mock_game = Minesweeper::Game.new(@board, {})
 
     assert_equal(10, @mock_game.board.row_size)
     assert_equal(7, @mock_game.board.bomb_count)

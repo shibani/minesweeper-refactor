@@ -3,9 +3,14 @@ require "test_helper"
 class BoardFormatterTest < Minitest::Test
   def setup
     @board = Minesweeper::Board.new(5,5)
-    @game = Minesweeper::Game.new(@board)
-    @formatter = @game.formatter
-    @game2 = Minesweeper::Game.new(@board, true)
+    @test_io = { 
+      output: Minesweeper::Output.new, 
+      input: "test",
+      board_printer: Minesweeper::BoardPrinter.new,
+      board_formatter: Minesweeper::BoardFormatter.new
+    }
+    @game = Minesweeper::Game.new(@board, @test_io)
+    @game2 = Minesweeper::Game.new(@board, @test_io, true)
   end
 
   def test_that_it_can_set_the_show_bombs_attribute

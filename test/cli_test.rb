@@ -8,7 +8,6 @@ class CliTest < Minitest::Test
   def setup
     @cli = Minesweeper::CLI.new
     @board = Minesweeper::Board.new(10,0)
-    @mock_game = Minesweeper::MockGame.new(@board)
     @mock_cli = Minesweeper::MockCli.new
     @mock_io = { output: Minesweeper::MockOutput.new, input: Minesweeper::Input.new }
     @test_io = { 
@@ -16,6 +15,7 @@ class CliTest < Minitest::Test
       input: Minesweeper::Input.new, 
       board_formatter: Minesweeper::BoardFormatter.new, 
       board_printer: Minesweeper::BoardPrinter.new }
+    @mock_game = Minesweeper::MockGame.new(@board, @test_io)
   end
 
   def test_that_it_has_a_cli_class

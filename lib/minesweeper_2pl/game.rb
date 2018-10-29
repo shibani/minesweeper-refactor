@@ -3,12 +3,12 @@ module Minesweeper
     attr_accessor :game_over
     attr_reader :board, :formatter, :board_printer, :icon_style, :game_utils
 
-    def initialize(board, cat_emoji=nil)
+    def initialize(board, io, cat_emoji=nil)
       @board = board
       @game_utils = GameUtils.new
       @icon_style = cat_emoji ? CatEmoji.new : BombEmoji.new
-      @formatter = BoardFormatter.new
-      @board_printer = BoardPrinter.new
+      @formatter = io[:board_formatter]
+      @board_printer = io[:board_printer]
     end
 
     def get_position(move)
@@ -35,11 +35,6 @@ module Minesweeper
 
     def board_flags
       game_utils.board_flags(board)
-    end
-
-    def print_board(io)
-      board_array = formatter.format_board_with_emoji(board, icon_style)
-      board_printer.print_board(board_array, board, io)
     end
 
     def set_positions(array)
@@ -75,7 +70,7 @@ module Minesweeper
 
     def check_win_or_loss(io)
       return unless game_over
-      is_won? ? process_game_over(io, 'won') : process_game_over(io, 'show')
+      is_won? ? process_game_over('won') : process_game_over('show')
     end
 
     def mark_move_on_board(position)
@@ -83,7 +78,7 @@ module Minesweeper
         reassign_bomb(position) if game_utils.first_move?(board) && game_utils.position_is_a_bomb?(board, position)
         reveal_position_with_flood_fill(board, position)
       end
-      revealed_status(board, position)
+      set_board_cell_revealed_status(board, position)
       game_utils.board_position_at(board, position).remove_flag unless game_utils.position_is_a_bomb?(board, position)
     end
 
@@ -110,9 +105,8 @@ module Minesweeper
       game_utils.mark_flag(board, position)
     end
 
-    def process_game_over(io, game_msg)
+    def process_game_over(game_msg)
       formatter.show_bombs = game_msg if ['won', 'show'].include? game_msg
-      #print_board(io)
       game_msg == 'won' ? 'win' : 'lose'
     end
 
@@ -132,7 +126,7 @@ module Minesweeper
       end
     end
 
-    def revealed_status(board, position)
+    def set_board_cell_revealed_status(board, position)
       game_utils.board_position_at(board, position).revealed_status
     end
   end

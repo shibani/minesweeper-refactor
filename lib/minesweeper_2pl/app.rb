@@ -19,7 +19,7 @@ module Minesweeper
     def setup_game(cli, io)
       game_config = cli.start(io)
       board = Board.new(game_config[:row_size], game_config[:bomb_count])
-      Game.new(board, game_config[:formatter])
+      Game.new(board, io, game_config[:formatter])
     end
 
     def play_game(game, cli, io)

@@ -4,8 +4,7 @@ class GameTest < Minitest::Test
 
   def setup
     @board = Minesweeper::Board.new(5,5,[10,11,12,13,14])
-    @game = Minesweeper::Game.new(@board)
-    @mock_game = Minesweeper::MockGame.new(@board)
+    @mock_game = Minesweeper::MockGame.new(@board, {}, nil)
     @mock_io = { output: Minesweeper::MockOutput.new, input: "test" }
     @test_io = { 
       output: Minesweeper::Output.new, 
@@ -13,6 +12,7 @@ class GameTest < Minitest::Test
       board_printer: Minesweeper::BoardPrinter.new,
       board_formatter: Minesweeper::BoardFormatter.new
     }
+    @game = Minesweeper::Game.new(@board, @test_io, nil)
   end
 
   def test_that_it_has_a_game_class
@@ -39,7 +39,7 @@ class GameTest < Minitest::Test
     positions = ' , , , , , , , , , ,B,B,B,B, , '.split(",")
     bomb_positions = [10, 11, 12, 13]
     board = Minesweeper::Board.new(4,4,bomb_positions)
-    game = Minesweeper::Game.new(board)
+    game = Minesweeper::Game.new(board, {})
     game.set_positions(positions)
 
     result = game.board_positions.map{|cell| cell.value}
@@ -84,7 +84,7 @@ class GameTest < Minitest::Test
   def test_that_it_can_access_position_by_coordinates
     bomb_positions = [13, 15, 16, 18, 19]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
 
     move = [3,3, 'move']
 
@@ -94,7 +94,7 @@ class GameTest < Minitest::Test
   def test_that_it_can_place_a_move_on_the_board
     bomb_positions = [13, 15, 16, 18, 19]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
     move = [0, 0, 'move']
 
     @game.place_move(move)
@@ -105,7 +105,7 @@ class GameTest < Minitest::Test
   def test_that_it_can_set_the_game_to_game_over
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
     flags = [10, 11, 12, 13, 14]
     flags.each { |fl| @game.mark_flag_on_board(fl) }
     to_reveal = [0,1,2,3,4,5,6,7,8,15,16,17,18,19,20,21,22,23,24]
@@ -121,7 +121,7 @@ class GameTest < Minitest::Test
   def test_that_it_can_set_a_flag
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
     move = [0,1, 'flag']
 
     @game.place_move(move)
@@ -132,7 +132,7 @@ class GameTest < Minitest::Test
   def test_that_it_can_remove_a_flag
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
     move = [1,2, 'flag']
 
     @game.place_move(move)
@@ -144,7 +144,7 @@ class GameTest < Minitest::Test
   def test_that_it_can_check_if_a_game_is_over_1
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
     flags = [10,11,13,14]
     flags.each { |fl| @game.mark_flag_on_board(fl) }
     to_reveal = [0,1,2,3,4,5,6,7,8,9,15,16,17,18,19,20,21,22,23,24]
@@ -160,7 +160,7 @@ class GameTest < Minitest::Test
   def test_that_it_can_check_if_a_game_is_over_2
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
     flags = [10,11,13,14]
     flags.each { |fl| @game.mark_flag_on_board(fl) }
     move1 = [0,1, 'move']
@@ -175,7 +175,7 @@ class GameTest < Minitest::Test
   def test_that_it_can_check_if_a_game_is_over_3
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
     flags = [10,11,13,14]
     flags.each { |fl| @game.mark_flag_on_board(fl) }
     move = [0,1, 'flag']
@@ -186,19 +186,19 @@ class GameTest < Minitest::Test
   end
 
   def test_that_it_can_set_the_formatters_show_bombs_attribute
-    @game.process_game_over(@mock_io, 'show')
+    @game.process_game_over('show')
 
     assert_equal('show', @game.formatter.show_bombs)
   end
 
   def test_that_it_can_turn_off_the_formatters_show_bombs_attribute
-    @game.process_game_over(@mock_io, 'random string')
+    @game.process_game_over('random string')
 
     refute @game.formatter.show_bombs
   end
 
   def test_that_it_can_set_the_formatters_show_bombs_attribute_to_won
-    @game.process_game_over(@mock_io, 'won')
+    @game.process_game_over('won')
 
     assert_equal("won", @game.formatter.show_bombs)
   end
@@ -206,7 +206,7 @@ class GameTest < Minitest::Test
   def test_that_it_can_check_if_a_game_is_won
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
     flags = [10,11,13,14]
     flags.each { |fl| @game.mark_flag_on_board(fl) }
     to_reveal = [0,1,2,3,4,5,6,7,8,9,15,16,17,18,19,20,21,22,23,24]
@@ -222,7 +222,7 @@ class GameTest < Minitest::Test
   def test_that_it_can_check_if_the_game_is_won
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
     flags = [10,11,12,13,14]
     flags.each { |fl| @game.mark_flag_on_board(fl) }
     to_reveal = [0,1,2,3,4,5,6,7,8,9,15,16,17,18,19,20,21,22,23,24]
@@ -235,7 +235,7 @@ class GameTest < Minitest::Test
   def test_that_it_can_check_if_the_game_is_not_won
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
     to_reveal =  [0,1,2,3,4,5,6,7,8,9,15,16,17,18,19,20,21,22,23,24]
     to_reveal.each { |el|
       @game.board_positions[el].revealed_status }
@@ -245,7 +245,7 @@ class GameTest < Minitest::Test
   def test_that_it_can_check_if_a_move_is_valid_1
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
     to_reveal = [0,1,2,3,4]
     to_reveal.each { |el|
       @game.board_positions[el].revealed_status }
@@ -257,46 +257,16 @@ class GameTest < Minitest::Test
   def test_that_it_can_check_if_a_move_is_valid_2
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
     move = nil
 
     assert(@game.is_not_valid?(move))
   end
 
-  # def test_that_gameloop_check_status_can_check_if_the_game_is_over
-  #   bomb_positions = [10, 11, 12, 13, 14]
-  #   board = Minesweeper::Board.new(5, 5, bomb_positions)
-  #   mock_game = Minesweeper::MockGame.new(board)
-  #   flags = [10,11,12,13,14]
-  #   flags.each { |fl| mock_game.mark_flag_on_board(fl) }
-  #   to_reveal = [0,1,2,3,4,8,9,15,16,17,18,19,20,21,22,23,24]
-  #   to_reveal.each { |el|
-  #     mock_game.board_positions[el].revealed_status }
-
-  #   refute(mock_game.gameloop_check_status(@test_io))
-  # end
-
-  # def test_that_gameloop_check_status_can_print_the_board
-  #   bomb_positions = [10, 11, 12, 13, 14]
-  #   board = Minesweeper::Board.new(5, 5, bomb_positions)
-  #   mock_game = Minesweeper::MockGame.new(board)
-  #   flags = [10,11,12,13,14]
-  #   flags.each { |fl| @game.mark_flag_on_board(fl) }
-
-  #   mock_game.game_over = false
-  #   mock_cli.set_input!("display board")
-
-  #   out, err = capture_io do
-  #     mock_cli.print_board(@test_io)
-  #   end
-
-  #   assert_equal("display board", out)
-  # end
-
   def test_that_it_can_check_if_the_game_is_won_or_lost
     bomb_positions = [10, 11, 12, 13, 14]
     board = Minesweeper::Board.new(5, 5, bomb_positions)
-    mock_game = Minesweeper::MockGame.new(@board)
+    mock_game = Minesweeper::MockGame.new(@board, @test_io)
     bomb_positions.each { |flag| mock_game.mark_flag_on_board(flag) }
     mock_game.game_over = true
 
@@ -306,7 +276,7 @@ class GameTest < Minitest::Test
   def test_that_it_can_check_if_the_game_is_won_or_lost_2
     bomb_positions = [10, 11, 12, 13, 14]
     board = Minesweeper::Board.new(5, 5, bomb_positions)
-    mock_game = Minesweeper::MockGame.new(board)
+    mock_game = Minesweeper::MockGame.new(board, @test_io)
     move = [0,2, 'move']
 
     mock_game.place_move(move)
@@ -318,7 +288,7 @@ class GameTest < Minitest::Test
   def test_that_it_a_game_is_lost_all_its_bomb_positions_are_set_to_revealed
     bomb_positions = [10, 11, 12, 13, 14]
     board = Minesweeper::Board.new(5, 5, bomb_positions)
-    mock_game = Minesweeper::MockGame.new(board)
+    mock_game = Minesweeper::MockGame.new(board, @test_io)
     mock_game.mark_flag_on_board(10)
     mock_game.mark_flag_on_board(11)
     move = [0,2, 'move']
@@ -333,7 +303,7 @@ class GameTest < Minitest::Test
   def test_that_it_sets_a_square_to_revealed_after_marking_a_move
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
     @game.mark_move_on_board(9)
 
     assert_equal('revealed', @game.board_positions[9].status)
@@ -343,7 +313,7 @@ class GameTest < Minitest::Test
   def test_that_revealed_cells_have_revealed_status
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
     @game.mark_move_on_board(9)
 
     assert_equal('revealed', @game.board_positions[8].status)
@@ -360,7 +330,7 @@ class GameTest < Minitest::Test
   def test_that_it_can_mark_a_flag_on_the_board
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
     result = @game.mark_flag_on_board(16)
     assert_equal('F', result)
   end
@@ -368,7 +338,7 @@ class GameTest < Minitest::Test
   def test_that_it_doesnt_mark_a_flag_if_position_is_revealed
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
 
     to_reveal = [0,1,2,3,4,5,6,7,8,9,15,16,17,18,19,20,21,22,23,24]
     to_reveal.each { |el|
@@ -383,7 +353,7 @@ class GameTest < Minitest::Test
   def test_that_it_marks_a_flag_if_position_contains_an_integer
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
 
     @game.mark_flag_on_board(4)
 
@@ -393,7 +363,7 @@ class GameTest < Minitest::Test
   def test_that_flood_fill_returns_adjacent_empties_1
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
     to_reveal = [20,21,22,23,24]
     to_reveal.each { |el|
       @game.board_positions[el].revealed_status }
@@ -405,7 +375,7 @@ class GameTest < Minitest::Test
   def test_that_flood_fill_returns_adjacent_empties_when_position_is_a_bomb
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
     result = @game.flood_fill(10)
 
     assert_equal([5,6,15,16,10], result)
@@ -414,7 +384,7 @@ class GameTest < Minitest::Test
   def test_that_flood_fill_does_not_return_flagged_positions
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
     flags = [5,6]
     flags.each { |fl| @game.mark_flag_on_board(fl) }
     result = @game.flood_fill(10)
@@ -425,7 +395,7 @@ class GameTest < Minitest::Test
   def test_that_reassign_bombs_can_prevent_first_move_from_ending_the_game
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
     move = [2,2, "move"]
 
     @game.place_move(move)
@@ -436,7 +406,7 @@ class GameTest < Minitest::Test
   def test_that_reassign_bombs_can_update_the_bombs_positions_array
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
 
     @game.reassign_bomb(12)
 
@@ -446,7 +416,7 @@ class GameTest < Minitest::Test
   def test_that_reassign_bombs_preserves_the_number_of_total_bombs
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
 
     @game.reassign_bomb(12)
 
@@ -456,7 +426,7 @@ class GameTest < Minitest::Test
   def test_that_reassign_bombs_can_update_cell_content
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
 
     @game.reassign_bomb(12)
 
@@ -466,7 +436,7 @@ class GameTest < Minitest::Test
   def test_that_reassign_bombs_can_update_cell_values
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
 
     @game.reassign_bomb(12)
 
@@ -476,7 +446,7 @@ class GameTest < Minitest::Test
   def test_that_if_first_move_is_a_bomb_it_gets_reassigned
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
     move = [2,2, "move"]
 
     @game.place_move(move)
@@ -489,7 +459,7 @@ class GameTest < Minitest::Test
   def test_that_if_second_move_has_greater_than_zero_value_it_only_reveals_itself
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
     move1 = [0,0, "move"]
     move2 = [4,3, "move"]
 
@@ -504,7 +474,7 @@ class GameTest < Minitest::Test
   def test_that_if_a_move_is_placed_on_a_flagged_square_the_flag_is_removed
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
     move1 = [0,0, "move"]
     move2 = [4,3, "flag"]
     move3 = [4,3, "move"]
@@ -519,7 +489,7 @@ class GameTest < Minitest::Test
   def test_that_it_can_return_the_board_values
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
 
     expected = [0, 0, 0, 0, 0, 2, 3, 3, 3, 2, 'B', 'B', 'B', 'B', 'B', 2, 3, 3, 3, 2, 0, 0, 0, 0, 0]
     assert_equal(expected, @game.board_values)
@@ -528,7 +498,7 @@ class GameTest < Minitest::Test
   def test_that_it_can_return_the_boards_cell_status
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
 
     to_reveal = [20,21,22,23,24]
     to_reveal.each { |el|
@@ -541,7 +511,7 @@ class GameTest < Minitest::Test
 
     bomb_positions = [10, 11, 12, 13, 14]
     @board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @game = Minesweeper::Game.new(@board)
+    @game = Minesweeper::Game.new(@board, {})
     to_reveal = [20,21,22,23,24]
 
     result = @game.set_cell_status(to_reveal)
