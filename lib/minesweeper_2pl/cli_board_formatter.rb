@@ -1,5 +1,5 @@
 module Minesweeper
-  class BoardFormatter
+  class CliBoardFormatter
 
     attr_accessor :show_bombs
 

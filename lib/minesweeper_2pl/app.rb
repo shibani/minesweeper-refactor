@@ -7,7 +7,7 @@ module Minesweeper
       io = {
         output: Output.new,
         input: Input.new,
-        board_formatter: BoardFormatter.new,
+        board_formatter: CliBoardFormatter.new,
         board_printer: BoardPrinter.new
       }
       cli = CLI.new

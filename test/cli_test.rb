@@ -13,7 +13,7 @@ class CliTest < Minitest::Test
     @test_io = { 
       output: Minesweeper::Output.new, 
       input: Minesweeper::Input.new, 
-      board_formatter: Minesweeper::BoardFormatter.new, 
+      board_formatter: Minesweeper::CliBoardFormatter.new, 
       board_printer: Minesweeper::BoardPrinter.new }
     @mock_game = Minesweeper::MockGame.new(@board, @test_io)
   end

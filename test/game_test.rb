@@ -10,7 +10,7 @@ class GameTest < Minitest::Test
       output: Minesweeper::Output.new, 
       input: "test",
       board_printer: Minesweeper::BoardPrinter.new,
-      board_formatter: Minesweeper::BoardFormatter.new
+      board_formatter: Minesweeper::CliBoardFormatter.new
     }
     @game = Minesweeper::Game.new(@board, @test_io, nil)
   end

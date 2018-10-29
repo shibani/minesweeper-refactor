@@ -9,7 +9,7 @@ class AppTest < Minitest::Test
     @test_io = { 
       output: Minesweeper::Output.new, 
       input: 'test',
-      board_formatter: Minesweeper::BoardFormatter.new,
+      board_formatter: Minesweeper::CliBoardFormatter.new,
       board_printer: Minesweeper::MockBoardPrinter.new
     }
     @mock_game = Minesweeper::MockGame.new(@mock_board, @test_io)
