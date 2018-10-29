@@ -172,9 +172,10 @@ class CliTest < Minitest::Test
     bomb_positions = [10, 11, 12, 13, 14]
     board = Minesweeper::Board.new(5, 5, bomb_positions)
     icon_style = Minesweeper::BombEmoji.new
+    game = Minesweeper::Game.new(board, @test_io, icon_style)
 
     out, _err = capture_io do
-      @cli.print_board(board, @test_io, icon_style)
+      @cli.print_board(game, @test_io)
     end
     $stdin = STDIN
 

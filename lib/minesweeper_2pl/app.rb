@@ -24,7 +24,7 @@ module Minesweeper
 
     def play_game(game, cli, io)
       until game.game_over
-        cli.print_board(game.board, io, game.icon_style)
+        cli.print_board(game, io)
         move = nil
         while game.is_not_valid?(move)
           cli.invalid_move(io) if move
@@ -37,7 +37,7 @@ module Minesweeper
 
     def end_game(game, cli, io)
       result = game.check_win_or_loss
-      cli.print_board(game.board, io, game.icon_style)
+      cli.print_board(game, io)
       message = cli.show_game_over_message(result, io)
       io[:output].display(message)
     end

@@ -15,9 +15,9 @@ module Minesweeper
       game_config
     end
 
-    def print_board(board, io, icon_style)
-      board_array = io[:board_formatter].format_board_with_emoji(board, icon_style)
-      io[:board_printer].print_board(board_array, board, io)
+    def print_board(game, io)
+      board_array = io[:board_formatter].format_board_with_emoji(game.board, game.icon_style)
+      io[:board_printer].print_board(board_array, game.board, io)
     end
 
     def get_move(game, io)
