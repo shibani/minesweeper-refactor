@@ -8,6 +8,15 @@ class NeighboringCellsTest < Minitest::Test
 
     @bomb_positions13 = [10, 11, 12, 13, 14, 20, 23, 24, 30, 31, 32, 33, 34]
     @board13 = Minesweeper::Board.new(10, 13, @bomb_positions13)
+
+    @neighboring_cells = Minesweeper::NeighboringCells.new
+  end
+
+  def test_that_it_can_check_if_a_cell_is_the_current_cell
+    row_offset = 0
+    cell_offset = 0
+
+    assert(@neighboring_cells.current_cell?(row_offset, cell_offset))
   end
 
   def test_that_it_can_collect_neighboring_cells_when_given_a_position
