@@ -5,12 +5,11 @@ module Minesweeper
 
     def format_board_with_emoji(board, emoji)
       board.positions.map do |cell|
-        if ['won', 'show'].include? show_bombs
-          if show_bombs == 'show'
-            render_lost_view(cell, emoji)
-          elsif show_bombs == 'won'
-            render_won_view(cell, emoji)
-          end
+        case show_bombs
+        when 'won'
+          render_won_view(cell, emoji)
+        when 'show'
+          render_lost_view(cell, emoji)
         else
           render_normal_view(cell, emoji)
         end
