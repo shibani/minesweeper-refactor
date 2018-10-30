@@ -34,13 +34,6 @@ module Minesweeper
       end
     end
 
-    def position_to_move(board, position)
-      [
-        (position % board.row_size).to_i,
-        (position / board.row_size).to_i
-      ]
-    end
-
     def board_position_at(board, position)
       board.positions[position]
     end
@@ -53,11 +46,7 @@ module Minesweeper
       board_position_at(board, position).content == ' '
     end
 
-    def position_is_flag?(board, position)
-      board_position_at(board, position).flag == 'F'
-    end
-
-    def position_includes_a_flag?(board, position)
+    def position_is_a_flag?(board, position)
       board_position_at(board, position).flag == 'F'
     end
 
@@ -67,10 +56,6 @@ module Minesweeper
 
     def position_has_a_non_zero_value?(board, position)
       (board_position_at(board, position).value.is_a? Integer) && (board_position_at(board, position).value > 0)
-    end
-
-    def mark_board(board, position, content)
-      board_position_at(board, position).update_cell_content(content)
     end
 
     def mark_flag(board, position)
@@ -88,8 +73,8 @@ module Minesweeper
       board.bomb_positions
     end
 
-    def all_bomb_positions_are_flagged?
-      board_flags.sort == bomb_positions.sort
+    def all_bomb_positions_are_flagged?(board)
+      board_flags(board).sort == bomb_positions(board).sort
     end
 
     def first_move?(board)

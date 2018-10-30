@@ -11,7 +11,7 @@ class InputValidatorTest < Minitest::Test
     @board = Minesweeper::Board.new(10,10)
     @mock_cli = Minesweeper::MockCli.new
     @test_io = { output: Minesweeper::Output.new, input: Minesweeper::Input.new }
-    @mock_game = Minesweeper::MockGame.new(@board, @test_io)
+    @mock_game = Minesweeper::Game.new(@board, @test_io)
     @game = Minesweeper::Game.new(@board, @test_io)
   end
 

@@ -12,7 +12,7 @@ class AppTest < Minitest::Test
       board_formatter: Minesweeper::CliBoardFormatter.new,
       board_printer: Minesweeper::MockBoardPrinter.new
     }
-    @mock_game = Minesweeper::MockGame.new(@mock_board, @test_io)
+    @mock_game = Minesweeper::Game.new(@mock_board, @test_io)
   end
 
   def test_that_app_can_setup_and_return_a_new_game
