@@ -1,6 +1,6 @@
 require "test_helper"
 
-class BoardFormatterTest < Minitest::Test
+class CliBoardFormatterTest < Minitest::Test
   def setup
     @board = Minesweeper::Board.new(5,5)
     @test_io = { 
