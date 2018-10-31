@@ -38,31 +38,33 @@ module Minesweeper
       io[:output].display(Messages.invalid_move)
     end
 
-    def show_game_over_message(result, io)
+    def build_game_over_message(result, io)
       io[:output].display(Messages.show_game_over_message(result))
     end
 
-    def get_player_params
+    def get_player_params(io)
       result = []
-      result << get_size
-      result << get_count
-      result
+      size = get_size(io)
+      result << size
+      result << get_count(io, size)
     end
 
-    def get_size
+    def get_size(io)
       size = nil
       while size.nil?
         io[:output].display(Messages.ask_for_row_size)
         size = get_player_entered_board_size(io)
       end
+      size
     end
 
-    def get_count
+    def get_count(io, size)
       count = nil
       while count.nil?
         io[:output].display(Messages.ask_for_bomb_count(size))
         count = get_player_entered_bomb_count(size * size, io)
       end
+      count
     end
 
     def get_emoji_type(io)

@@ -161,7 +161,7 @@ class CliTest < Minitest::Test
     string = "\nGame over! You win!\n"
 
     out, _err = capture_io do
-      @cli.show_game_over_message('win', @test_io)
+      @cli.build_game_over_message('win', @test_io)
     end
     $stdin = STDIN
 

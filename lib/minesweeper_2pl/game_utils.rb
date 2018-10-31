@@ -60,13 +60,8 @@ module Minesweeper
 
     def mark_flag(board, position)
       cell = board_position_at(board, position)
-      unless cell.status == 'revealed'
-        if cell.flag == 'F'
-          cell.remove_flag
-        elsif cell.flag.nil?
-          cell.add_flag
-        end
-      end
+      return cell.remove_flag if cell.status != 'revealed' && cell.flag == 'F'
+      return cell.add_flag if cell.status != 'revealed' && cell.flag.nil?
     end
 
     def bomb_positions(board)
