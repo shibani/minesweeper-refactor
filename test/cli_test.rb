@@ -33,6 +33,20 @@ class CliTest < Minitest::Test
     assert @cli.respond_to?(:print)
   end
 
+  def test_that_the_start_method_returns_a_hash_for_the_game_config
+    io = StringIO.new
+    io.puts 's'
+    io.puts '10'
+    io.puts '70'
+    io.rewind
+    $stdin = io
+
+    result = @mock_cli.start(@mock_io)
+    $stdin = STDIN
+
+    assert_equal({ formatter: 'S', row_size: 10, bomb_count: 70 }, result)
+  end
+
   def test_that_it_can_get_the_emoji_type_from_the_player
     assert_output "You selected B for bombs.\n" do
       simulate_stdin('b') { @cli.get_emoji_type }
@@ -45,35 +59,27 @@ class CliTest < Minitest::Test
     end
   end
 
-  def test_that_it_can_return_message_if_input_is_invalid
+  def test_that_it_can_return_a_message_if_emoji_input_is_invalid
     simulate_stdin('y') { @cli.get_emoji_type(@mock_io) }
     assert "That was not a valid choice. Please try again.\n"
   end
 
-  def test_that_it_can_capture_input_from_the_player_1
-    assert_output 'You selected move 3,9. Placing your move.' do
-      simulate_stdin('move 3,9') { @cli.get_player_input(@mock_game, @test_io) }
+  def test_that_it_can_capture_a_board_size_from_the_player
+    assert_output "You have selected a 10 x 10 board. Generating board." do
+      simulate_stdin("10") {@cli.get_player_entered_board_size(@test_io) }
     end
   end
 
-  def test_that_it_can_capture_input_from_the_player_2
-    assert_output 'You selected flag 9,0. Placing your flag.' do
-      simulate_stdin('flag 9,0') { @cli.get_player_input(@mock_game, @test_io) }
+  def test_that_it_can_check_if_entered_board_size_is_not_an_integer
+    assert_output "That is not a valid row size. Please try again." do
+      simulate_stdin("test") { @cli.get_player_entered_board_size(@test_io) }
     end
   end
 
-  def test_that_it_returns_an_array_if_input_is_valid
-    io = StringIO.new
-    io.puts 'flag 5,6'
-    io.rewind
-    $stdin = io
-
-    out, _err = capture_io do
-      @cli.get_player_input(@mock_game, @test_io)
+  def test_that_it_can_check_if_entered_board_size_is_too_large
+    assert_output "That is not a valid row size. Please try again." do
+      simulate_stdin("35") { @cli.get_player_entered_board_size(@test_io) }
     end
-    $stdin = STDIN
-
-    assert_equal('You selected flag 5,6. Placing your flag.', out)
   end
 
   def test_that_it_returns_the_board_size_if_valid
@@ -88,6 +94,18 @@ class CliTest < Minitest::Test
     $stdin = STDIN
 
     assert_equal('You have selected a 16 x 16 board. Generating board.', out)
+  end
+
+  def test_that_it_can_check_if_entered_bomb_count_is_not_an_integer
+    assert_output "That is not a valid bomb count. Please try again." do
+      simulate_stdin("test") { @cli.get_player_entered_bomb_count(100, @test_io) }
+    end
+  end
+
+  def test_that_it_can_check_if_entered_bomb_count_is_too_large
+    assert_output "That is not a valid bomb count. Please try again." do
+      simulate_stdin("105") { @cli.get_player_entered_bomb_count(100, @test_io) }
+    end
   end
 
   def test_that_it_can_capture_a_bomb_count_from_the_player
@@ -123,18 +141,48 @@ class CliTest < Minitest::Test
     assert_equal([10,70], result)
   end
 
-  def test_that_the_start_method_returns_a_hash_for_the_game_config
+  def test_that_it_can_check_if_the_coordinates_are_less_than_the_rowsize
+    assert_output "Expecting 'flag' or 'move', with one digit from header and one digit from left column. Please try again!" do
+      simulate_stdin("3,12") { @cli.get_player_input(@mock_game, @test_io) }
+    end
+  end
+
+  def test_that_it_can_check_if_move_input_is_valid_1
+    assert_output "Expecting 'flag' or 'move', with one digit from header and one digit from left column. Please try again!" do
+      simulate_stdin("bad input") { @cli.get_player_input(@mock_game, @test_io) }
+    end
+  end
+
+  def test_that_it_can_check_if_move_input_is_valid_2
+    assert_output "Expecting 'flag' or 'move', with one digit from header and one digit from left column. Please try again!" do
+      simulate_stdin("flag A,8") { @cli.get_player_input(@mock_game, @test_io) }
+    end
+  end
+
+  def test_that_it_can_capture_move_input_from_the_player_1
+    assert_output 'You selected move 3,9. Placing your move.' do
+      simulate_stdin('move 3,9') { @cli.get_player_input(@mock_game, @test_io) }
+    end
+  end
+
+  def test_that_it_can_capture_move_input_from_the_player_2
+    assert_output 'You selected flag 9,0. Placing your flag.' do
+      simulate_stdin('flag 9,0') { @cli.get_player_input(@mock_game, @test_io) }
+    end
+  end
+
+  def test_that_it_returns_an_array_if_input_is_valid
     io = StringIO.new
-    io.puts 's'
-    io.puts '10'
-    io.puts '70'
+    io.puts 'flag 5,6'
     io.rewind
     $stdin = io
 
-    result = @mock_cli.start(@mock_io)
+    out, _err = capture_io do
+      @cli.get_player_input(@mock_game, @test_io)
+    end
     $stdin = STDIN
 
-    assert_equal({ formatter: 'S', row_size: 10, bomb_count: 70 }, result)
+    assert_equal('You selected flag 5,6. Placing your flag.', out)
   end
 
   def test_that_it_can_get_a_player_move

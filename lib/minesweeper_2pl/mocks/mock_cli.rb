@@ -4,6 +4,8 @@ module Minesweeper
 
     def initialize
       @count = 0
+      @messages = Messages.new
+      @validator = InputValidator.new(@messages)
     end
 
     def reset_count
