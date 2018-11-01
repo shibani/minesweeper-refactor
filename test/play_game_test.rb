@@ -2,9 +2,11 @@ require "test_helper"
 
 class PlayGameTest < Minitest::Test
   def setup
+    @messages = Minesweeper::Messages.new
+    @validator = Minesweeper::InputValidator.new(@messages)
     bomb_positions = [10, 11, 12, 13, 14]
     @mock_board = Minesweeper::Board.new(5, 5, bomb_positions)
-    @mock_cli = Minesweeper::MockCli.new
+    @mock_cli = Minesweeper::MockCli.new(@messages, @validator)
     @mock_app = Minesweeper::App.new
     @test_io = { 
       output: Minesweeper::Output.new,

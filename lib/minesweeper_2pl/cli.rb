@@ -3,9 +3,9 @@ module Minesweeper
 
     attr_reader :messages, :validator
 
-    def initialize
-      @messages = Messages.new
-      @validator = InputValidator.new(@messages)
+    def initialize(messages, validator)
+      @messages = messages
+      @validator = validator
     end
 
     def print(msg, io)

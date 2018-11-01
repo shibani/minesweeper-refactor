@@ -2,10 +2,10 @@ module Minesweeper
   class MockCli < CLI
     attr_accessor :count
 
-    def initialize
+    def initialize(messages, validator)
       @count = 0
-      @messages = Messages.new
-      @validator = InputValidator.new(@messages)
+      @messages = messages
+      @validator = validator
     end
 
     def reset_count

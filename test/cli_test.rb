@@ -6,9 +6,11 @@ class CliTest < Minitest::Test
   include IoTestHelpers
 
   def setup
-    @cli = Minesweeper::CLI.new
+    @messages = Minesweeper::Messages.new
+    @validator = Minesweeper::InputValidator.new(@messages)
+    @cli = Minesweeper::CLI.new(@messages, @validator)
     @board = Minesweeper::Board.new(10,0)
-    @mock_cli = Minesweeper::MockCli.new
+    @mock_cli = Minesweeper::MockCli.new(@messages, @validator)
     @mock_io = { output: Minesweeper::MockOutput.new, input: Minesweeper::Input.new }
     @test_io = { 
       output: Minesweeper::Output.new, 
