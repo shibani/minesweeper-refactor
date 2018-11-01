@@ -13,6 +13,7 @@ module Minesweeper
       messages = Messages.new
       validator = InputValidator.new(messages)
       cli = CLI.new(messages, validator)
+      
       game = SetupGame.new.run(cli, io)
       PlayGame.new.run(game, cli, io)
       EndGame.new.run(game, cli, io)

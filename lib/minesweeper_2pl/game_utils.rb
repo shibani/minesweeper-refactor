@@ -27,11 +27,8 @@ module Minesweeper
     end
 
     def move_to_position(board, move)
-      if move.is_a? Array
-        move[0] + board.row_size * move[1]
-      else
-        raise
-      end
+      return move[0] + board.row_size * move[1] if move.is_a? Array
+      raise
     end
 
     def board_position_at(board, position)

@@ -7,7 +7,6 @@ class SetupGameTest < Minitest::Test
     bomb_positions = [10, 11, 12, 13, 14]
     @test_board = Minesweeper::Board.new(5, 5, bomb_positions)
     @mock_cli = Minesweeper::MockCli.new(@messages, @validator)
-    # @test_cli = Minesweeper::CLI.new(@messages, @validator)
     @test_app = Minesweeper::App.new
     @test_io = { 
       output: Minesweeper::Output.new, 
