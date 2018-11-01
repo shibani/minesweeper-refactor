@@ -1,5 +1,6 @@
 module Minesweeper
   class CLI
+
     def print(msg, io)
       io[:output].display(msg)
     end
@@ -12,6 +13,11 @@ module Minesweeper
       game_config[:row_size] = result[0].to_i
       game_config[:bomb_count] = result[1].to_i
       game_config
+    end
+
+    def print_board(game, io)
+      board_array = io[:board_formatter].format_board_with_emoji(game.board, game.icon_style)
+      io[:board_printer].print_board(board_array, game.board, io)
     end
 
     def get_move(game, io)
@@ -32,25 +38,33 @@ module Minesweeper
       io[:output].display(Messages.invalid_move)
     end
 
-    def show_game_over_message(result, io)
+    def build_game_over_message(result, io)
       io[:output].display(Messages.show_game_over_message(result))
     end
 
     def get_player_params(io)
       result = []
+      size = get_size(io)
+      result << size
+      result << get_count(io, size)
+    end
+
+    def get_size(io)
       size = nil
       while size.nil?
         io[:output].display(Messages.ask_for_row_size)
         size = get_player_entered_board_size(io)
       end
-      result << size
+      size
+    end
+
+    def get_count(io, size)
       count = nil
       while count.nil?
         io[:output].display(Messages.ask_for_bomb_count(size))
         count = get_player_entered_bomb_count(size * size, io)
       end
-      result << count
-      result
+      count
     end
 
     def get_emoji_type(io)

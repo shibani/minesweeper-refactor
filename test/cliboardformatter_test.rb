@@ -1,11 +1,16 @@
 require "test_helper"
 
-class BoardFormatterTest < Minitest::Test
+class CliBoardFormatterTest < Minitest::Test
   def setup
     @board = Minesweeper::Board.new(5,5)
-    @game = Minesweeper::Game.new(@board)
-    @formatter = @game.formatter
-    @game2 = Minesweeper::Game.new(@board, true)
+    @test_io = { 
+      output: Minesweeper::Output.new, 
+      input: "test",
+      board_printer: Minesweeper::BoardPrinter.new,
+      board_formatter: Minesweeper::CliBoardFormatter.new
+    }
+    @game = Minesweeper::Game.new(@board, @test_io)
+    @game2 = Minesweeper::Game.new(@board, @test_io, true)
   end
 
   def test_that_it_can_set_the_show_bombs_attribute
@@ -26,7 +31,7 @@ class BoardFormatterTest < Minitest::Test
                   "B", "3", "0", "X", " ",
                   "B", "2", "0", "X", " "]
     @game.set_positions(positions)
-    @game.board_positions.each { |cell| cell.update_cell_status }
+    @game.board_positions.each { |cell| cell.revealed_status }
 
     board_array = @formatter.format_board_with_emoji(@game.board, @game.icon_style)
     result = board_array[8]
@@ -55,7 +60,7 @@ class BoardFormatterTest < Minitest::Test
                   "B", "3", "0", "X", " ",
                   "B", "2", "0", "X", " "]
     @game.set_positions(positions)
-    @game.board_positions.each { |cell| cell.update_cell_status }
+    @game.board_positions.each { |cell| cell.revealed_status }
 
     board_array = @formatter.format_board_with_emoji(@game.board, @game.icon_style)
     result = board_array[11]
@@ -70,7 +75,7 @@ class BoardFormatterTest < Minitest::Test
                   "B", "3", "0", "X", " ",
                   "B", "2", "0", "X", " "]
     @game.set_positions(positions)
-    @game.board_positions.each { |cell| cell.update_cell_status }
+    @game.board_positions.each { |cell| cell.revealed_status }
 
     board_array = @formatter.format_board_with_emoji(@game.board, @game.icon_style)
     result = board_array[7]
@@ -86,7 +91,7 @@ class BoardFormatterTest < Minitest::Test
                   "B", "3", "0", "X", " ",
                   "B", "2", "0", "X", " "]
     @game.set_positions(positions)
-    @game.board_positions.each { |cell| cell.update_cell_status }
+    @game.board_positions.each { |cell| cell.revealed_status }
 
     board_array = @formatter.format_board_with_emoji(@game.board, @game.icon_style)
     result = board_array[10]
@@ -102,7 +107,7 @@ class BoardFormatterTest < Minitest::Test
                   "B", "3", "0", "X", " ",
                   "B", "2", "0", "X", " "]
     @game.set_positions(positions)
-    @game.board_positions.each { |cell| cell.update_cell_status }
+    @game.board_positions.each { |cell| cell.revealed_status }
 
     board_array = @formatter.format_board_with_emoji(@game.board, @game.icon_style)
     result = board_array[5]
@@ -123,7 +128,7 @@ class BoardFormatterTest < Minitest::Test
     @game.board_positions[10].add_flag
     @game.board_positions[15].add_flag
     @game.board_positions[20].add_flag
-    @game.board_positions.each { |cell| cell.update_cell_status }
+    @game.board_positions.each { |cell| cell.revealed_status }
 
     board_array = @formatter.format_board_with_emoji(@game.board, @game.icon_style)
     result = board_array[10]
@@ -187,7 +192,7 @@ class BoardFormatterTest < Minitest::Test
     @game.mark_flag_on_board(5)
     @game.mark_flag_on_board(12)
     @formatter.show_bombs = "show"
-    @game.board_positions.each { |cell| cell.update_cell_status }
+    @game.board_positions.each { |cell| cell.revealed_status }
 
     board_array = @formatter.format_board_with_emoji(@game.board, @game.icon_style)
     result1 = board_array[5]
@@ -208,7 +213,7 @@ class BoardFormatterTest < Minitest::Test
     @game.mark_flag_on_board(10)
     @formatter.show_bombs = "show"
     to_reveal = [0,1,2,3,4,5,6]
-    to_reveal.each { |cell| @game.board_positions[cell].update_cell_status }
+    to_reveal.each { |cell| @game.board_positions[cell].revealed_status }
 
     board_array = @formatter.format_board_with_emoji(@game.board, @game.icon_style)
     result = board_array[10]
@@ -231,7 +236,7 @@ class BoardFormatterTest < Minitest::Test
     @game.set_positions(positions)
     @game.mark_flag_on_board(5)
     @game.mark_flag_on_board(12)
-    @game.board_positions.each { |cell| cell.update_cell_status }
+    @game.board_positions.each { |cell| cell.revealed_status }
 
     result = @formatter.format_board_with_emoji(@game.board, @game.icon_style)
 
@@ -257,7 +262,7 @@ class BoardFormatterTest < Minitest::Test
     @game.mark_flag_on_board(10)
     @game.mark_flag_on_board(15)
     @game.mark_flag_on_board(20)
-    @game.board_positions.each { |cell| cell.update_cell_status }
+    @game.board_positions.each { |cell| cell.revealed_status }
 
     result = @formatter.format_board_with_emoji(@game.board, @game.icon_style)
 
@@ -279,7 +284,7 @@ class BoardFormatterTest < Minitest::Test
     @game.set_positions(positions)
     @game.mark_flag_on_board(5)
     @game.mark_flag_on_board(12)
-    @game.board_positions.each { |cell| cell.update_cell_status }
+    @game.board_positions.each { |cell| cell.revealed_status }
 
     result = @formatter.format_board_with_emoji(@game.board, @game.icon_style)
 
@@ -304,7 +309,7 @@ class BoardFormatterTest < Minitest::Test
                   "B", "3", "0", "X", " ",
                   "B", "2", "0", "X", " "]
     @game2.set_positions(positions)
-    @game2.board_positions.each { |cell| cell.update_cell_status }
+    @game2.board_positions.each { |cell| cell.revealed_status }
 
     board_array = @game2.formatter.format_board_with_emoji(@game2.board, @game2.icon_style)
     result = board_array[8]
@@ -333,7 +338,7 @@ class BoardFormatterTest < Minitest::Test
                   "B", "3", "0", "X", " ",
                   "B", "2", "0", "X", " "]
     @game2.set_positions(positions)
-    @game2.board_positions.each { |cell| cell.update_cell_status }
+    @game2.board_positions.each { |cell| cell.revealed_status }
 
     board_array = @game2.formatter.format_board_with_emoji(@game2.board, @game2.icon_style)
     result = board_array[11]
@@ -348,7 +353,7 @@ class BoardFormatterTest < Minitest::Test
                   "B", "3", "0", "X", " ",
                   "B", "2", "0", "X", " "]
     @game2.set_positions(positions)
-    @game2.board_positions.each { |cell| cell.update_cell_status }
+    @game2.board_positions.each { |cell| cell.revealed_status }
 
     board_array = @game2.formatter.format_board_with_emoji(@game2.board, @game2.icon_style)
     result = board_array[7]
@@ -364,7 +369,7 @@ class BoardFormatterTest < Minitest::Test
                   "B", "3", "0", "X", " ",
                   "B", "2", "0", "X", " "]
     @game2.set_positions(positions)
-    @game2.board_positions.each { |cell| cell.update_cell_status }
+    @game2.board_positions.each { |cell| cell.revealed_status }
 
     board_array = @game2.formatter.format_board_with_emoji(@game2.board, @game2.icon_style)
     result = board_array[10]
@@ -380,7 +385,7 @@ class BoardFormatterTest < Minitest::Test
                   "B", "3", "0", "X", " ",
                   "B", "2", "0", "X", " "]
     @game2.set_positions(positions)
-    @game2.board_positions.each { |cell| cell.update_cell_status }
+    @game2.board_positions.each { |cell| cell.revealed_status }
 
     board_array = @game2.formatter.format_board_with_emoji(@game2.board, @game2.icon_style)
     result = board_array[5]
@@ -401,7 +406,7 @@ class BoardFormatterTest < Minitest::Test
     @game2.board_positions[10].add_flag
     @game2.board_positions[15].add_flag
     @game2.board_positions[20].add_flag
-    @game2.board_positions.each { |cell| cell.update_cell_status }
+    @game2.board_positions.each { |cell| cell.revealed_status }
 
     board_array = @game2.formatter.format_board_with_emoji(@game2.board, @game2.icon_style)
     result = board_array[10]
@@ -465,7 +470,7 @@ class BoardFormatterTest < Minitest::Test
     @game2.mark_flag_on_board(5)
     @game2.mark_flag_on_board(12)
     @game2.formatter.show_bombs = "show"
-    @game2.board_positions.each { |cell| cell.update_cell_status }
+    @game2.board_positions.each { |cell| cell.revealed_status }
 
     board_array = @game2.formatter.format_board_with_emoji(@game2.board, @game2.icon_style)
     result1 = board_array[5]
@@ -486,7 +491,7 @@ class BoardFormatterTest < Minitest::Test
     @game2.mark_flag_on_board(10)
     @game2.formatter.show_bombs = "show"
     to_reveal = [0,1,2,3,4,5,6]
-    to_reveal.each { |cell| @game2.board_positions[cell].update_cell_status }
+    to_reveal.each { |cell| @game2.board_positions[cell].revealed_status }
 
     board_array = @game2.formatter.format_board_with_emoji(@game2.board, @game2.icon_style)
     result = board_array[10]
@@ -509,7 +514,7 @@ class BoardFormatterTest < Minitest::Test
     @game2.set_positions(positions)
     @game2.mark_flag_on_board(5)
     @game2.mark_flag_on_board(12)
-    @game2.board_positions.each { |cell| cell.update_cell_status }
+    @game2.board_positions.each { |cell| cell.revealed_status }
 
     result = @game2.formatter.format_board_with_emoji(@game2.board, @game2.icon_style)
 
@@ -535,7 +540,7 @@ class BoardFormatterTest < Minitest::Test
     @game2.mark_flag_on_board(10)
     @game2.mark_flag_on_board(15)
     @game2.mark_flag_on_board(20)
-    @game2.board_positions.each { |cell| cell.update_cell_status }
+    @game2.board_positions.each { |cell| cell.revealed_status }
 
     result = @game2.formatter.format_board_with_emoji(@game2.board, @game2.icon_style)
 
@@ -557,7 +562,7 @@ class BoardFormatterTest < Minitest::Test
     @game2.set_positions(positions)
     @game2.mark_flag_on_board(5)
     @game2.mark_flag_on_board(12)
-    @game2.board_positions.each { |cell| cell.update_cell_status }
+    @game2.board_positions.each { |cell| cell.revealed_status }
 
     result = @game2.formatter.format_board_with_emoji(@game2.board, @game2.icon_style)
 

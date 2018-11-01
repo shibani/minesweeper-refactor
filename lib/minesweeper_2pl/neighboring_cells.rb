@@ -22,16 +22,6 @@ module Minesweeper
       row_offset.zero? && cell_offset.zero?
     end
 
-    def collect_row(cells_hash, row_factor, row_neighbor, args_hash)
-      collect_cell(cells_hash, row_factor, row_neighbor, args_hash)
-    end
-
-    def collect_cell(cells_hash, row_factor, row_neighbor, args_hash)
-      key = row_neighbor + row_factor
-      row = (args_hash[:position] / args_hash[:row_size]).to_i * args_hash[:row_size] + row_factor
-      cells_hash[key] = row
-    end
-
     def all_neighboring_cells(cells_hash, args_hash)
       cells_hash.each do |cell_position, cell_row|
         args_hash[:positions_array] << cell_position if within_bounds(cell_position, cell_row, args_hash[:row_size])
@@ -44,6 +34,16 @@ module Minesweeper
     end
 
     private
+
+    def collect_row(cells_hash, row_factor, row_neighbor, args_hash)
+      collect_cell(cells_hash, row_factor, row_neighbor, args_hash)
+    end
+
+    def collect_cell(cells_hash, row_factor, row_neighbor, args_hash)
+      key = row_neighbor + row_factor
+      row = (args_hash[:position] / args_hash[:row_size]).to_i * args_hash[:row_size] + row_factor
+      cells_hash[key] = row
+    end
 
     def is_empty?(position, positions)
       positions[position].content != 'B'

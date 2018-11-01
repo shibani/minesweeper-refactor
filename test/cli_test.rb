@@ -8,10 +8,14 @@ class CliTest < Minitest::Test
   def setup
     @cli = Minesweeper::CLI.new
     @board = Minesweeper::Board.new(10,0)
-    @mock_game = Minesweeper::MockGame.new(@board)
     @mock_cli = Minesweeper::MockCli.new
     @mock_io = { output: Minesweeper::MockOutput.new, input: Minesweeper::Input.new }
-    @test_io = { output: Minesweeper::Output.new, input: Minesweeper::Input.new }
+    @test_io = { 
+      output: Minesweeper::Output.new, 
+      input: Minesweeper::Input.new, 
+      board_formatter: Minesweeper::CliBoardFormatter.new, 
+      board_printer: Minesweeper::BoardPrinter.new }
+    @mock_game = Minesweeper::Game.new(@board, @test_io)
   end
 
   def test_that_it_has_a_cli_class
@@ -157,10 +161,26 @@ class CliTest < Minitest::Test
     string = "\nGame over! You win!\n"
 
     out, _err = capture_io do
-      @cli.show_game_over_message('win', @test_io)
+      @cli.build_game_over_message('win', @test_io)
     end
     $stdin = STDIN
 
     assert_equal(string, out)
+  end
+
+  def test_that_it_can_print_the_board
+    bomb_positions = [10, 11, 12, 13, 14]
+    board = Minesweeper::Board.new(5, 5, bomb_positions)
+    icon_style = Minesweeper::BombEmoji.new
+    game = Minesweeper::Game.new(board, @test_io, icon_style)
+
+    out, _err = capture_io do
+      @cli.print_board(game, @test_io)
+    end
+    $stdin = STDIN
+
+    expected = "\n         0      1      2      3      4  \n     +======+======+======+======+======+\n   0 |      |      |      |      |      |\n     +======+======+======+======+======+"
+
+    assert_includes(out, expected)
   end
 end
