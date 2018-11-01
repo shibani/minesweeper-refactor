@@ -10,7 +10,10 @@ module Minesweeper
         board_formatter: CliBoardFormatter.new,
         board_printer: BoardPrinter.new
       }
-      cli = CLI.new
+      messages = Messages.new
+      validator = InputValidator.new(messages)
+      cli = CLI.new(messages, validator)
+      
       game = SetupGame.new.run(cli, io)
       PlayGame.new.run(game, cli, io)
       EndGame.new.run(game, cli, io)

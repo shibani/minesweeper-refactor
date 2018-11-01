@@ -44,11 +44,8 @@ module Minesweeper
     end
 
     def dedupe_cells_to_check(checked, cells_to_check)
-      if checked.empty?
-        cells_to_check.uniq
-      else
-        cells_to_check.uniq - checked
-      end
+      return cells_to_check.uniq if checked.empty?
+      cells_to_check.uniq - checked
     end
   end
 end

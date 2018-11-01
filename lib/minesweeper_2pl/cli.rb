@@ -1,12 +1,19 @@
 module Minesweeper
   class CLI
 
+    attr_reader :messages, :validator
+
+    def initialize(messages, validator)
+      @messages = messages
+      @validator = validator
+    end
+
     def print(msg, io)
       io[:output].display(msg)
     end
 
     def start(io)
-      io[:output].display(Messages.welcome)
+      io[:output].display(messages.welcome)
       game_config = {}
       game_config[:formatter] = ask_for_emoji_type(io)
       result = get_player_params(io)
@@ -21,25 +28,25 @@ module Minesweeper
     end
 
     def get_move(game, io)
-      io[:output].display(Messages.ask_for_move)
+      io[:output].display(messages.ask_for_move)
       get_player_input(game, io)
     end
 
     def ask_for_emoji_type(io)
       choice = nil
       while choice.nil?
-        io[:output].display(Messages.ask_for_emoji_type)
+        io[:output].display(messages.ask_for_emoji_type)
         choice = get_emoji_type(io)
       end
       ['S', 's'].include?(choice) ? 'S' : nil
     end
 
     def invalid_move(io)
-      io[:output].display(Messages.invalid_move)
+      io[:output].display(messages.invalid_move)
     end
 
     def build_game_over_message(result, io)
-      io[:output].display(Messages.show_game_over_message(result))
+      io[:output].display(messages.show_game_over_message(result))
     end
 
     def get_player_params(io)
@@ -52,7 +59,7 @@ module Minesweeper
     def get_size(io)
       size = nil
       while size.nil?
-        io[:output].display(Messages.ask_for_row_size)
+        io[:output].display(messages.ask_for_row_size)
         size = get_player_entered_board_size(io)
       end
       size
@@ -61,7 +68,7 @@ module Minesweeper
     def get_count(io, size)
       count = nil
       while count.nil?
-        io[:output].display(Messages.ask_for_bomb_count(size))
+        io[:output].display(messages.ask_for_bomb_count(size))
         count = get_player_entered_bomb_count(size * size, io)
       end
       count
@@ -69,40 +76,34 @@ module Minesweeper
 
     def get_emoji_type(io)
       input = io[:input].get_input
-      if InputValidator.emoji_type_has_correct_format(input)
-        result = InputValidator.return_emoji_type(input, io)
-      else
-        io[:output].display(Messages.invalid_emoji_type_message)
-        result = nil
+      if validator.emoji_type_has_correct_format(input)
+        return validator.return_emoji_type(input, io)
       end
-      result
+      io[:output].display(messages.invalid_emoji_type_message)
     end
 
     def get_player_input(game, io)
       input = io[:input].get_input
-      if InputValidator.player_input_has_correct_format(input)
-        InputValidator.return_coordinates_if_input_is_within_range(input, game, io)
-      else
-        io[:output].display(Messages.invalid_player_input_message)
+      if validator.player_input_has_correct_format(input)
+        return validator.return_coordinates_if_input_is_within_range(input, game, io)
       end
+      io[:output].display(messages.invalid_player_input_message)
     end
 
     def get_player_entered_board_size(io)
       input = io[:input].get_input
-      if InputValidator.board_size_input_has_correct_format(input)
-        InputValidator.return_row_size_if_input_is_within_range(input, io)
-      else
-        io[:output].display(Messages.invalid_row_size_message)
+      if validator.board_size_input_has_correct_format(input)
+        return validator.return_row_size_if_input_is_within_range(input, io)
       end
+      io[:output].display(messages.invalid_row_size_message)
     end
 
     def get_player_entered_bomb_count(board_size, io)
       input = io[:input].get_input
-      if InputValidator.bomb_count_input_has_correct_format(input)
-        InputValidator.return_bomb_count_if_input_is_within_range(input, board_size, io)
-      else
-        io[:output].display(Messages.invalid_bomb_count_message)
+      if validator.bomb_count_input_has_correct_format(input)
+        return validator.return_bomb_count_if_input_is_within_range(input, board_size, io)
       end
+      io[:output].display(messages.invalid_bomb_count_message)
     end
   end
 end

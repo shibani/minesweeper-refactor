@@ -82,10 +82,6 @@ module Minesweeper
       game_utils.board_position_at(board, position).remove_flag unless game_utils.position_is_a_bomb?(board, position)
     end
 
-    def not_the_first_move_but_position_has_zero_score(board, position)
-      !game_utils.first_move?(board) && game_utils.position_has_a_zero_value?(board, position)
-    end
-
     def reveal_position_with_flood_fill(board, position)
       game_utils.position_is_a_bomb?(board, position) ? self.game_over = true : flood_fill(position)
     end
@@ -111,6 +107,10 @@ module Minesweeper
     end
 
     private
+
+    def not_the_first_move_but_position_has_zero_score(board, position)
+      !game_utils.first_move?(board) && game_utils.position_has_a_zero_value?(board, position)
+    end
 
     def update_cell_content(board, array)
       array.each.with_index do |position, i|
