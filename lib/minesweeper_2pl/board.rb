@@ -6,7 +6,7 @@ module Minesweeper
     def initialize(row_size, bomb_count, bomb_position_args=[])
       @row_size = row_size
       @bomb_count = bomb_count
-      @size = @row_size ** 2
+      @size = @row_size**2
       @neighboring_cells = NeighboringCells.new
       @adjacent_empties = AdjacentEmpties.new
       assign_bomb_positions(bomb_position_args)
